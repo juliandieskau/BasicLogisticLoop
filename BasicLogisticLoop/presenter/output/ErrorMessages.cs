@@ -11,8 +11,8 @@ namespace BasicLogisticLoop.presenter.output
     /// </summary>
     internal static class ErrorMessages
     {
-        public const String StepError = "Could not step a cycle forward.";
-        public const String RetrievalError = "The retrieval node is not empty thus could not retrieve container from warehouse.";
-        public const String CommissionError = "The node after picking station is not empty thus could not put container into loop.";
+        public const string StepError = "Could not step a cycle forward.";
+        public const string RetrievalError = "The retrieval node is not empty thus could not retrieve container from warehouse.";
+        public const string CommissionError = "The node after picking station is not empty thus could not put container into loop.";
     }
 }
