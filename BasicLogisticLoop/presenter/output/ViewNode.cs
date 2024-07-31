@@ -13,19 +13,19 @@ namespace BasicLogisticLoop.presenter.output
     internal struct ViewNode
     {
         /// <summary>
-        /// The type of the ViewNode, see enum <see cref="NodeType"/>.
+        /// The type of the ViewNode.
         /// </summary>
         public NodeType Type { get; private set; }
-
-        /// <summary>
-        /// The coordinates at which the ViewNode is located at in 2D-Space in a Grid. 
-        /// </summary>
-        public (int X, int Y) Coordinates { get; private set; }
         
         /// <summary>
         /// The unique ID of the node in the model to identify it.
         /// </summary>
         public int NodeID { get; private set; }
+
+        /// <summary>
+        /// The coordinates at which the ViewNode is located at in 2D-Space in a Grid. 
+        /// </summary>
+        public (int X, int Y) Coordinates { get; private set; }
 
         /// <summary>
         /// An array of NodeIDs that point to the Nodes, that this node can transport Containers to.
@@ -40,7 +40,7 @@ namespace BasicLogisticLoop.presenter.output
         /// <summary>
         /// Constructor for the ViewNode.
         /// </summary>
-        /// <param name="type">The type of the ViewNode, see enum <see cref="NodeType"/>.</param>
+        /// <param name="type">The type of the ViewNode.</param>
         /// <param name="coords">The coordinates at which the ViewNode is located at in 2D-Space in a Grid. </param>
         /// <param name="nodeID">The unique ID of the node in the model to identify it.</param>
         /// <param name="followingNodes">An array of NodeIDs that point to the Nodes, that this node can transport Containers to.</param>

@@ -62,5 +62,16 @@ namespace BasicLogisticLoop.model
             Content = newContent;
             return oldContent;
         }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Container container &&
+                   TransportUnitNumber == container.TransportUnitNumber;
+        }
+
+        public override int GetHashCode()
+        {
+            return 623182445 + TransportUnitNumber.GetHashCode();
+        }
     }
 }
