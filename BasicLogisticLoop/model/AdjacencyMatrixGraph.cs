@@ -8,5 +8,6 @@ namespace BasicLogisticLoop.model
 {
     internal class AdjacencyMatrixGraph : IGraph
     {
+
     }
 }
