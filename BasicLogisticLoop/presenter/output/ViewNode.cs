@@ -15,27 +15,27 @@ namespace BasicLogisticLoop.presenter.output
         /// <summary>
         /// The type of the ViewNode, see enum <see cref="NodeType"/>.
         /// </summary>
-        public NodeType Type { get; }
+        public NodeType Type { get; private set; }
 
         /// <summary>
         /// The coordinates at which the ViewNode is located at in 2D-Space in a Grid. 
         /// </summary>
-        public (int X, int Y) Coordinates { get; }
+        public (int X, int Y) Coordinates { get; private set; }
         
         /// <summary>
         /// The unique ID of the node in the model to identify it.
         /// </summary>
-        public int NodeID { get; }
+        public int NodeID { get; private set; }
 
         /// <summary>
         /// An array of NodeIDs that point to the Nodes, that this node can transport Containers to.
         /// </summary>
-        public int[] FollowingNodes { get; }
+        public int[] FollowingNodes { get; private set; }
 
         /// <summary>
         /// The Container standing on the node. Can only hold one Container at a time. May be null if no Container on it.
         /// </summary>
-        public Container Container { get; }
+        public Container Container { get; private set; }
 
         /// <summary>
         /// Constructor for the ViewNode.

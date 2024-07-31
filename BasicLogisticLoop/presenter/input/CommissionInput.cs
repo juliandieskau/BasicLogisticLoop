@@ -11,7 +11,7 @@ namespace BasicLogisticLoop.presenter.input
         /// <summary>
         /// The unique ID of the ComissionNode in the model that the input to retrieve was called from.
         /// </summary>
-        public int NodeID { get; }
+        public int NodeID { get; private set; }
 
         /// <summary>
         /// Type of Input to indicate that the model should try to retrieve a container from the CommissionNode that called back to the adjacent loop node.
