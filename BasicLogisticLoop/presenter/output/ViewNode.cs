@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace BasicLogisticLoop.presenter.output
 {
+    /// <summary>
+    /// Value-Type representing the important data of a node at the current time without exposing the logic of the model.
+    /// </summary>
     internal struct ViewNode
     {
         /// <summary>
