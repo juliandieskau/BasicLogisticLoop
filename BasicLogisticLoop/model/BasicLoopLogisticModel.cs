@@ -11,7 +11,7 @@ namespace BasicLogisticLoop.Model
     /// Implementation of the <see cref="ILogisticModel"/> that creates a Layout based on the "Logistikloop Basic" assignment. 
     /// Contains the logic and model that the LogisticLoop Basic operates after.
     /// </summary>
-    internal class BasicLoopModel : ILogisticModel
+    internal class BasicLoopLogisticModel : ILogisticModel
     {
         // Objects of the model
         /// <summary>
@@ -38,7 +38,7 @@ namespace BasicLogisticLoop.Model
         /// Fills the Graph and GraphNodes with the Model-Layout that the BasicLoopModel.
         /// Nodes are ordered and linked accordingly by their assigned ID, IDs start at 0 and increment by 1 per new node added.
         /// </summary>
-        public BasicLoopModel()
+        public BasicLoopLogisticModel()
         {
             ConstructGraph();
             ConstructGraphNodes();

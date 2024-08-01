@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace BasicLogisticLoop.Presenter.Output
 {
+    /// <summary>
+    /// Defines the types of Nodes in the Model by their function.
+    /// </summary>
     internal enum NodeType
     {
         Conveyor,

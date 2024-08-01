@@ -53,7 +53,7 @@
       <DependentUpon>BasicLogisticLoop.cs</DependentUpon>
     </Compile>
     <Compile Include="Model\AdjacencyMatrixGraph.cs" />
-    <Compile Include="Model\BasicLoopModel.cs" />
+    <Compile Include="Model\BasicLoopLogisticModel.cs" />
     <Compile Include="Model\Container.cs" />
     <Compile Include="Model\GraphNode.cs" />
     <Compile Include="Model\IGraph.cs" />

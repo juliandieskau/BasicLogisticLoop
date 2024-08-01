@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace BasicLogisticLoop.Presenter.Input
 {
+    /// <summary>
+    /// Input Class to define the content of the input, when a button is clicked to call the CommissionContainer method on the given node.
+    /// </summary>
     internal class CommissionInput : IInput
     {
         /// <summary>
