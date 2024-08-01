@@ -36,10 +36,14 @@ namespace BasicLogisticLoop.model
         {
             // Test validity of arguments.
             if (fromNodeID < 0 || toNodeID < 0 || fromNodeID >= this.NodeNumber || toNodeID >= this.NodeNumber)
+            {
                 throw new ArgumentOutOfRangeException("NodeIDs are out of bounds.");
+            } 
 
             if (weight < 1)
+            {
                 throw new ArgumentException("Weight of Edge cannot be less than 1.");
+            } 
 
             // Add edge.
             this.Matrix[fromNodeID, toNodeID] = weight;
@@ -48,13 +52,18 @@ namespace BasicLogisticLoop.model
         public override IEnumerable<int> GetAdjacentNodes(int nodeID)
         {
             if (nodeID < 0 || nodeID >= this.NodeNumber)
+            {
                 throw new ArgumentOutOfRangeException("This nodeID is not in the valid range.");
+            }
+                
 
             List<int> adjacentNodes = new List<int>();
             for (int i = 0; i < this.NodeNumber; i++)
             {
                 if (this.Matrix[nodeID, i] > 0)
+                {
                     adjacentNodes.Add(i);
+                }
             }
             return adjacentNodes;
         }
@@ -63,7 +72,9 @@ namespace BasicLogisticLoop.model
         {
             // Test validity of arguments.
             if (fromNodeID < 0 || toNodeID < 0 || fromNodeID >= this.NodeNumber || toNodeID >= this.NodeNumber)
+            {
                 throw new ArgumentOutOfRangeException("NodeIDs are out of bounds.");
+            }
 
             return this.Matrix[fromNodeID, toNodeID];
         }
@@ -76,7 +87,9 @@ namespace BasicLogisticLoop.model
         private void GenerateEmptyMatrix(int nodeNumber)
         {
             if (nodeNumber < 0)
+            {
                 throw new ArgumentOutOfRangeException("Cannot generate Matrix with negative sizes.");
+            }
 
             this.Matrix = new int[nodeNumber, nodeNumber];
             for (int i = 0; i < nodeNumber; i++)
