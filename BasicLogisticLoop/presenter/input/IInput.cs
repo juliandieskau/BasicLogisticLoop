@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BasicLogisticLoop.presenter.input
+namespace BasicLogisticLoop.Presenter.Input
 {
     /// <summary>
     /// Marker interface to forward input from the view to the presenter and by checking their type make their contents accessible.

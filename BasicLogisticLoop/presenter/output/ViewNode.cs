@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BasicLogisticLoop.presenter.output
+namespace BasicLogisticLoop.Presenter.Output
 {
     /// <summary>
     /// Value-Type representing the important data of a node at the current time without exposing the logic of the model.

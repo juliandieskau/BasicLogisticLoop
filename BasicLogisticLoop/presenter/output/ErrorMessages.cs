@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BasicLogisticLoop.presenter.output
+namespace BasicLogisticLoop.Presenter.Output
 {
     /// <summary>
     /// Utility class containing error message strings to output from the Model to the View.

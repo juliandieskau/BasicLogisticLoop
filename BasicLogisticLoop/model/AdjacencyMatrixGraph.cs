@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BasicLogisticLoop.model
+namespace BasicLogisticLoop.Model
 {
     /// <summary>
     /// Representation of a graph by using a adjacency matrix to keep track of edges and their weights.

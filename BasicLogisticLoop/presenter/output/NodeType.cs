@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BasicLogisticLoop.presenter.output
+namespace BasicLogisticLoop.Presenter.Output
 {
     internal enum NodeType
     {

@@ -1,11 +1,11 @@
-﻿using BasicLogisticLoop.presenter.output;
+﻿using BasicLogisticLoop.Presenter.Output;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BasicLogisticLoop.model
+namespace BasicLogisticLoop.Model
 {
     internal class Container
     {

@@ -52,20 +52,20 @@
     <Compile Include="BasicLogisticLoop.Designer.cs">
       <DependentUpon>BasicLogisticLoop.cs</DependentUpon>
     </Compile>
-    <Compile Include="model\AdjacencyMatrixGraph.cs" />
-    <Compile Include="model\BasicLoopModel.cs" />
-    <Compile Include="model\Container.cs" />
-    <Compile Include="model\GraphNode.cs" />
-    <Compile Include="model\IGraph.cs" />
-    <Compile Include="model\IModel.cs" />
-    <Compile Include="presenter\input\CommissionInput.cs" />
-    <Compile Include="presenter\input\IInput.cs" />
-    <Compile Include="presenter\input\RetrievalInput.cs" />
-    <Compile Include="presenter\input\StepInput.cs" />
-    <Compile Include="presenter\output\ErrorMessages.cs" />
-    <Compile Include="presenter\output\NodeType.cs" />
-    <Compile Include="presenter\output\ViewNode.cs" />
-    <Compile Include="presenter\Presenter.cs" />
+    <Compile Include="Model\AdjacencyMatrixGraph.cs" />
+    <Compile Include="Model\BasicLoopModel.cs" />
+    <Compile Include="Model\Container.cs" />
+    <Compile Include="Model\GraphNode.cs" />
+    <Compile Include="Model\IGraph.cs" />
+    <Compile Include="Model\ILogisticModel.cs" />
+    <Compile Include="Presenter\Input\CommissionInput.cs" />
+    <Compile Include="Presenter\Input\IInput.cs" />
+    <Compile Include="Presenter\Input\RetrievalInput.cs" />
+    <Compile Include="Presenter\Input\StepInput.cs" />
+    <Compile Include="Presenter\Output\ErrorMessages.cs" />
+    <Compile Include="Presenter\Output\NodeType.cs" />
+    <Compile Include="Presenter\Output\ViewNode.cs" />
+    <Compile Include="Presenter\Presenter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">

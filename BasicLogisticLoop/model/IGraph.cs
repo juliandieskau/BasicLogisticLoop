@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BasicLogisticLoop.model
+namespace BasicLogisticLoop.Model
 {
     /// <summary>
     /// Abstract Class to define the methods needed to form a Graph.
