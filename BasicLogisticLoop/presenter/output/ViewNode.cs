@@ -9,6 +9,7 @@ namespace BasicLogisticLoop.Presenter.Output
 {
     /// <summary>
     /// Value-Type representing the important data of a node at the current time without exposing the logic of the model.
+    /// Initialize
     /// </summary>
     internal struct ViewNode
     {
@@ -52,6 +53,22 @@ namespace BasicLogisticLoop.Presenter.Output
             NodeID = nodeID;
             FollowingNodes = followingNodes;
             Container = container;
+        }
+
+        /// <summary>
+        /// Constructor for the ViewNode. Sets Container to null.
+        /// </summary>
+        /// <param name="type">The type of the ViewNode.</param>
+        /// <param name="coords">The coordinates at which the ViewNode is located at in 2D-Space in a Grid. </param>
+        /// <param name="nodeID">The unique ID of the node in the model to identify it.</param>
+        /// <param name="followingNodes">An array of NodeIDs that point to the Nodes, that this node can transport Containers to.</param>
+        public ViewNode(NodeType type, (int x, int Y) coords, int nodeID, int[] followingNodes)
+        {
+            Type = type;
+            Coordinates = coords;
+            NodeID = nodeID;
+            FollowingNodes = followingNodes;
+            Container = null;
         }
     }
 }

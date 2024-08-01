@@ -17,7 +17,7 @@ namespace BasicLogisticLoop.Model
         int[,] Matrix;
 
         /// <summary>
-        /// Constructs the AdjacencyMatrixGraph.
+        /// Constructs an empty AdjacencyMatrixGraph. Edges need to be added later manually.
         /// </summary>
         /// <param name="nodeNumber">Number of nodes the graph will consist of.</param>
         public AdjacencyMatrixGraph(int nodeNumber)
@@ -29,6 +29,27 @@ namespace BasicLogisticLoop.Model
             catch (ArgumentOutOfRangeException)
             {
                 throw;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a AdjacencyMatrixGraph. Edges are added by passing an array of edge-pairs.
+        /// </summary>
+        /// <param name="nodeNumber">Number of nodes the graph will consist of.</param>
+        /// <param name="edgeRepresentation">Multidimensional Array of fromID, toID, weight tuples with length nodeNumber.</param>
+        /// <exception cref="ArgumentException">When edgeRepresentation isnt of size [nodeNumber, 3].</exception>
+        public AdjacencyMatrixGraph(int nodeNumber, int[,] edgeRepresentation) : this(nodeNumber)
+        {
+            // Check argument correctness
+            if (edgeRepresentation.GetLength(0) != nodeNumber || edgeRepresentation.GetLength(1) != 3)
+            {
+                throw new ArgumentException("edgeRepresentation array needs to be of size [nodeNumber, 3]");
+            }
+
+            // Fill Graph
+            for (int i = 0; i < nodeNumber; i++)
+            {
+                this.AddEdge(edgeRepresentation[i,0], edgeRepresentation[i,1], edgeRepresentation[i,2]);
             }
         }
 

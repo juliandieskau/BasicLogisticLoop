@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace BasicLogisticLoop.Model
 {
+    /// <summary>
+    /// Container object that can move on nodes of the model and holds a content.
+    /// </summary>
     internal class Container
     {
         /// <summary>

@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace BasicLogisticLoop.Model
 {
+    /// <summary>
+    /// Represents a node and its data in the Graph Model.
+    /// </summary>
     internal class GraphNode
     {
         /// <summary>
