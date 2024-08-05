@@ -44,40 +44,100 @@ namespace BasicLogisticLoop.Model
             ConstructGraphNodes();
             ConstructWarehouseNodes();
         }
+
+        /// <summary>
+        /// Transforms the models nodes into a List of value-type ViewNodes that can be used by the view the present the models state without having access to the logic of the model.
+        /// Contains all the Conveyor, Retrieval, Storage, Commissioning and Warehouse nodes.
+        /// </summary>
+        /// <returns>List of ViewNodes that represent the current model state.</returns>
         public List<ViewNode> GetViewNodes()
         {
-            throw new NotImplementedException();
+            List<ViewNode> transformedNodes = new List<ViewNode>();
+            // Add all the graph nodes
+            foreach (var node in GraphNodes)
+            {
+                // Get array of nodes that the node has an edge towards
+                int[] adjacentNodes = new int[1];
+
+                if (node.IsEmpty())
+                {
+                    // If node is occupied with container create a ViewNode without container
+                    transformedNodes.Add(new ViewNode(type: node.Type, coords: node.Coordinates, nodeID: node.NodeID, followingNodes: adjacentNodes));
+                }
+                else
+                {
+                    // If node is occupied with container create a ViewNode that also has that information
+                    transformedNodes.Add(new ViewNode(type: node.Type, coords: node.Coordinates, nodeID: node.NodeID, followingNodes: adjacentNodes, container: node.GetContainer()));
+                }
+            }
+
+            // Add all warehouse nodes which are not represented in the graph
+            WarehouseNodes.ForEach(x => transformedNodes.Add(x));
+            
+            return transformedNodes;
         }
 
-        public string CommissionContainer(int nodeID, Container container)
-        {
-            throw new NotImplementedException();
-        }
-
-        public string RetrieveContainer(int nodeID, Container container)
-        {
-            throw new NotImplementedException();
-        }
-
+        /// <summary>
+        /// Steps a cycle forward in the logistic loop. Moves every container one node forward inside the loop or outside of the loop,
+        /// when adjacent to a destination node. Gives priority to certain nodes to handle their step first, to avoid race conditions.
+        /// Moves containers from the retrieval nodes into the loop if adjacent node is unoccupied.
+        /// </summary>
+        /// <returns>ErrorMessage when error occurs.</returns>
         public string Step()
         {
+            // Priorities:
+            // 1.) Storage-Nodes: Store Container into Warehouse to take out of cycle and clear up space.
+            // 2.) Conveyor-Nodes: Move Container adjacent to Storage-Node onto it if it's their destination.
+            // 3.) Conveyor-Nodes: Move Container adjacent to Commissioning-Node onto it if it's their destination and it's empty.
+            // 4.) Conveyor-Nodes: Move Containers one node forward in the conveyor loop, if target node of step is not adjacent to occupied Retrieval-Node. (Loop over conveyor nodes backwards from Commissioning Node)
+            // 5.) Retrieval-Nodes: Move Container on Retrieval-Node into the loop, if adjacent node is empty.
+            // Commissioning-Nodes have their own handling to move their Container into the loop on user input.
+            // Warehouse-Nodes dont have an active state so they don't need handling.
             throw new NotImplementedException();
+        }
+
+        // To show step by step how one step of a cycle is performed: (TODO if wanted)
+        // Returns List(size 2?) of changed nodes in each atomic step of one whole step and empty List if whole step is completed
+        //public List<ViewNode> AtomicStep() {}
+
+        /// <summary>
+        /// Commissions a container standing on the given Commissioning-Node (symbolically), gives it the destination "Storage"
+        /// and moves it back into the loop, if adjacent node is empty.
+        /// </summary>
+        /// <param name="nodeID">ID of the commission node to take the container of.</param>
+        /// <returns>ErrorMessage when container cannot be moved back into the loop (node occupied).</returns>
+        /// <exception cref="ArgumentException">When the given nodeID does not match a commission node.</exception>
+        public string CommissionContainer(int nodeID)
+        {
+            throw new ArgumentException();
+        }
+
+        /// <summary>
+        /// Takes a newly created container (from user input) and retrieves it (symbolically) from the warehouse onto the given retrieval node.
+        /// </summary>
+        /// <param name="nodeID">ID of the retrieval node to place the new container on.</param>
+        /// <param name="container">Container to place onto the retrieval node.</param>
+        /// <returns>ErrorMessage when adjacent node to commission node is occupied.</returns>
+        /// <exception cref="ArgumentException">When the given nodeID does not match a retrieval node.</exception>
+        public string RetrieveContainer(int nodeID, Container container)
+        {
+            throw new ArgumentException();
         }
 
         /// <summary>
         /// Stores the container on given node into the warehouse, if the node is a storage node.
         /// </summary>
-        /// <param name="nodeID"></param>
-        /// <exception cref=""
+        /// <param name="nodeID">ID of the storage node to take the container of.</param>
+        /// <exception cref="ArgumentException">When the given nodeID does not match a storage node.</exception>
         private void StoreContainer(int nodeID)
         {
-            throw new NotImplementedException();
+            throw new ArgumentException();
         }
 
         /// <summary>
         /// Returns the GraphNode corresponding to the given nodeID.
         /// </summary>
-        /// <param name="nodeID">ID to search the not for</param>
+        /// <param name="nodeID">ID of the node to search the graph for.</param>
         /// <returns>GraphNode if found, null if not.</returns>
         private GraphNode GetGraphNode(int nodeID)
         {
