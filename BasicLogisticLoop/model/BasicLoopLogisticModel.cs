@@ -82,7 +82,7 @@ namespace BasicLogisticLoop.Model
         /// when adjacent to a destination node. Gives priority to certain nodes to handle their step first, to avoid race conditions.
         /// Moves containers from the retrieval nodes into the loop if adjacent node is unoccupied.
         /// </summary>
-        /// <returns>ErrorMessage when error occurs.</returns>
+        /// <returns>ErrorMessage when error occurs or empty string if successful.</returns>
         public string Step()
         {
             // Priorities:
@@ -105,11 +105,11 @@ namespace BasicLogisticLoop.Model
         /// and moves it back into the loop, if adjacent node is empty.
         /// </summary>
         /// <param name="nodeID">ID of the commission node to take the container of.</param>
-        /// <returns>ErrorMessage when container cannot be moved back into the loop (node occupied).</returns>
+        /// <returns>ErrorMessage when container cannot be moved back into the loop (node occupied) or empty string if successful.</returns>
         /// <exception cref="ArgumentException">When the given nodeID does not match a commission node.</exception>
         public string CommissionContainer(int nodeID)
         {
-            throw new ArgumentException();
+            throw new ArgumentException("The given nodeID does not match a commission node.");
         }
 
         /// <summary>
@@ -117,11 +117,11 @@ namespace BasicLogisticLoop.Model
         /// </summary>
         /// <param name="nodeID">ID of the retrieval node to place the new container on.</param>
         /// <param name="container">Container to place onto the retrieval node.</param>
-        /// <returns>ErrorMessage when adjacent node to commission node is occupied.</returns>
+        /// <returns>ErrorMessage when adjacent node to commission node is occupied or empty string if successful.</returns>
         /// <exception cref="ArgumentException">When the given nodeID does not match a retrieval node.</exception>
         public string RetrieveContainer(int nodeID, Container container)
         {
-            throw new ArgumentException();
+            throw new ArgumentException("The given nodeID does not match a retrieval node.");
         }
 
         /// <summary>

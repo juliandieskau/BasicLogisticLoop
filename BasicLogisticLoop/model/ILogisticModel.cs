@@ -32,7 +32,7 @@ namespace BasicLogisticLoop.Model
         /// <param name="nodeID">ID of the commissioning node from which the container should be moved.</param>
         /// <param name="container">Container that should be moved.</param>
         /// <returns>ErrorMessage if adjacent node is not empty.</returns>
-        string CommissionContainer(int nodeID, Container container);
+        string CommissionContainer(int nodeID);
 
         /// <summary>
         /// Adds given container from the blackbox warehouse to the given retrieval node - if empty - with destination commissioning.
