@@ -9,7 +9,7 @@ namespace BasicLogisticLoop.Presenter.Output
 {
     /// <summary>
     /// Value-Type representing the important data of a node at the current time without exposing the logic of the model.
-    /// Initialize
+    /// Equals() on any instances of ViewNode will only be true if their containers are equal or both are null.
     /// </summary>
     internal struct ViewNode
     {
@@ -69,6 +69,40 @@ namespace BasicLogisticLoop.Presenter.Output
             NodeID = nodeID;
             FollowingNodes = followingNodes;
             Container = null;
+        }
+
+        public override bool Equals(object obj)
+        {
+            // Check if the container - which can be null - is equals
+            bool containerEquals = false;
+            if (obj is ViewNode cNode)
+            {
+                if (this.Container == null && cNode.Container == null)
+                {
+                    containerEquals = true;
+                }
+                else if (this.Container != null && cNode.Container != null)
+                {
+                    if (this.Container.Equals(cNode.Container))
+                    {
+                        containerEquals = true;
+                    }
+                }
+            }
+
+            return obj is ViewNode node &&
+                   Type == node.Type &&
+                   NodeID == node.NodeID &&
+                   containerEquals;
+        }
+
+        public override int GetHashCode()
+        {
+            int hashCode = -1518402686;
+            hashCode = hashCode * -1521134295 + Type.GetHashCode();
+            hashCode = hashCode * -1521134295 + NodeID.GetHashCode();
+            hashCode = hashCode * -1521134295 + (Container == null ? 0 : Container.GetHashCode());
+            return hashCode;
         }
     }
 }

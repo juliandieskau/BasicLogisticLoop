@@ -9,6 +9,7 @@ namespace BasicLogisticLoop.Model
 {
     /// <summary>
     /// Represents a node and its data in the Graph Model.
+    /// Equals() on an object of this class does not depend on its Container.
     /// </summary>
     internal class GraphNode
     {
@@ -82,13 +83,13 @@ namespace BasicLogisticLoop.Model
             Container = newContainer;
         }
 
+
         public override bool Equals(object obj)
         {
             return obj is GraphNode node &&
                    Type == node.Type &&
                    NodeID == node.NodeID &&
-                   Coordinates.Equals(node.Coordinates) &&
-                   Container.Equals(node.Container);
+                   Coordinates.Equals(node.Coordinates);
         }
 
         public override int GetHashCode()
@@ -97,7 +98,6 @@ namespace BasicLogisticLoop.Model
             hashCode = hashCode * -1521134295 + Type.GetHashCode();
             hashCode = hashCode * -1521134295 + NodeID.GetHashCode();
             hashCode = hashCode * -1521134295 + Coordinates.GetHashCode();
-            hashCode = hashCode * -1521134295 + Container.GetHashCode();
             return hashCode;
         }
     }
