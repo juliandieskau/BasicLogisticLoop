@@ -24,7 +24,7 @@ namespace BasicLogisticLoop.Presenter
         /// <summary>
         /// Handles all user interaction by showing the model data on screen and receiving user input through a GUI.
         /// </summary>
-        private Form View;
+        private BasicLogisticLoopForm View;
 
         /// <summary>
         /// List of all the ViewNodes that are currently shown in the view. May be used to check which Nodes have changed after 
@@ -37,10 +37,14 @@ namespace BasicLogisticLoop.Presenter
         /// <param name="view">Windows Form as the View Component of the MVP model.</param>
         public Presenter(Form view)
         {
-            this.View = view;
-            this.Model = new BasicLoopLogisticModel();
-            this.CurrentNodes = this.Model.GetViewNodes();
-            this.View.InitializeView(Model.GetViewNodes());
+            View = view as BasicLogisticLoopForm;
+            if (View == null)
+            {
+                throw new ArgumentNullException("view needs to be a valid BasicLogisticLoopForm object!");
+            }
+            Model = new BasicLoopLogisticModel();
+            CurrentNodes = this.Model.GetViewNodes();
+            View.InitializeView(Model.GetViewNodes());
         }
 
         /// <summary>
