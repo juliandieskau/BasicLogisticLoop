@@ -11,7 +11,7 @@ namespace BasicLogisticLoop.Presenter.Output
     /// Value-Type representing the important data of a node at the current time without exposing the logic of the model.
     /// Equals() on any instances of ViewNode will only be true if their containers are equal or both are null.
     /// </summary>
-    internal struct ViewNode
+    public struct ViewNode
     {
         /// <summary>
         /// The type of the ViewNode.

@@ -10,7 +10,7 @@ namespace BasicLogisticLoop.Model
     /// <summary>
     /// Container object that can move on nodes of the model and holds a content.
     /// </summary>
-    internal class Container
+    public class Container
     {
         /// <summary>
         /// Unique identifier for the container.
