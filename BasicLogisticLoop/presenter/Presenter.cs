@@ -40,7 +40,7 @@ namespace BasicLogisticLoop.Presenter
             this.View = view;
             this.Model = new BasicLoopLogisticModel();
             this.CurrentNodes = this.Model.GetViewNodes();
-            InitializeViewWithModel();
+            this.View.InitializeView(Model.GetViewNodes());
         }
 
         /// <summary>
@@ -89,21 +89,21 @@ namespace BasicLogisticLoop.Presenter
         }
 
         /// <summary>
-        /// 
+        /// Takes a List of ViewNodes and filters out its ViewNodes that have not changed compared to the previous view state.
+        /// Updates the currentNodes with all new nodes afterwards.
         /// </summary>
-        private void InitializeViewWithModel()
-        {
-
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="newCurrentNodes"></param>
-        /// <returns></returns>
+        /// <param name="newCurrentNodes">ViewNodes of the new state of the model.</param>
+        /// <returns>Filtered List of ViewNodes.</returns>
         private List<ViewNode> FilterUnchangedNodes(List<ViewNode> newCurrentNodes)
         {
-            throw new NotImplementedException();
+            // For every node of the newCurrentNodes:
+            //      Add all nodes that match the following criteria to the return
+            // Criteria:
+            //      If the CurrentNodes does not contain the node, it is added
+            // Contains():
+            //      Equals() Method that is overridden in ViewNode will be taken as comparison for Contains()
+            //      Equals() Method checks if the ViewNode has the same NodeType and NodeID and if it has the same Container on it
+            return newCurrentNodes.FindAll(node => !CurrentNodes.Contains(node));
         }
     }
 }

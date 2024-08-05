@@ -57,7 +57,7 @@ namespace BasicLogisticLoop.Model
             foreach (var node in GraphNodes)
             {
                 // Get array of nodes that the node has an edge towards
-                int[] adjacentNodes = new int[1];
+                int[] adjacentNodes = Graph.GetAdjacentNodes(node.NodeID).ToArray();
 
                 if (node.IsEmpty())
                 {

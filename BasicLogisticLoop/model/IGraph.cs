@@ -43,7 +43,7 @@ namespace BasicLogisticLoop.Model
         /// Calculates a List of NodeIDs that the given node has an edge towards.
         /// </summary>
         /// <param name="nodeID">ID of the node the adjacent ones are to be calculated.</param>
-        /// <returns>List of adjacent nodes.</returns>
+        /// <returns>List of nodeIDs of adjacent nodes.</returns>
         /// <exception cref="ArgumentOutOfRangeException">When the nodeID is smaller 0 or greater the number of nodes.</exception>
         public abstract IEnumerable<int> GetAdjacentNodes(int nodeID);
 
