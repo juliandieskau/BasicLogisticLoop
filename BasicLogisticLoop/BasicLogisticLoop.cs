@@ -40,6 +40,7 @@ namespace BasicLogisticLoop
         public BasicLogisticLoopForm()
         {
             Presenter = new Presenter.Presenter(this);
+            // Presenter calls InitializeView() in its constructor
             InitializeComponent();
         }
 
@@ -50,6 +51,11 @@ namespace BasicLogisticLoop
         public void InitializeView(List<ViewNode> initialViewNodes)
         {
             NodeData = initialViewNodes;
+
+            // Form settings
+            Text = "Logisticloop Basic";
+            BackColor = WindowBackColor;
+
 
             // TODO generate Labels and InputWindows here
             throw new NotImplementedException();
@@ -109,6 +115,17 @@ namespace BasicLogisticLoop
         }
 
         /// <summary>
+        /// Opens a MessageBox to show an error when performing an action that the model does not allow.
+        /// Has to be called when receiving a ErrorMessages string back from the Presenter.
+        /// </summary>
+        /// <param name="message">Error message to display.</param>
+        private void ShowErrorMessage(string message)
+        {
+            string subMessage = "\n Try again when valid.";
+            MessageBox.Show(text: message + subMessage, caption: "Invalid action");
+        }
+
+        /// <summary>
         /// Method to generate a label based on a ViewNode object.
         /// </summary>
         /// <param name="node">ViewNode object to represent as a label.</param>
@@ -140,13 +157,31 @@ namespace BasicLogisticLoop
         }
 
         /// <summary>
-        /// Adapter-Method to create label objects in a specified format. Adds the label to the Form's Controls.
+        /// Method that generates a Panel that holds Labels that shows the content of the node label that is being clicked on.
+        /// </summary>
+        /// <returns>Created Panel.</returns>
+        private FlowLayoutPanel GenerateContentWindow()
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Method that generates a Panel that holds Labels and TextBoxes to input the content of containers retrieved from the warehouse.
+        /// </summary>
+        /// <returns>Created Panel.</returns>
+        private FlowLayoutPanel GenerateRetrievalWindow()
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Adapter-Method to create label objects in a specified format.
         /// Always use this method to create labels!
         /// </summary>
         /// <param name="name">Name of the label to access it by.</param>
         /// <param name="text">Text of th label to be displayed.</param>
         /// <returns>Created label.</returns>
-        private void CreateLabel(string name, string text)
+        private Label CreateLabel(string name, string text)
         {
             Label label = new Label
             {
@@ -156,12 +191,12 @@ namespace BasicLogisticLoop
                 BorderStyle = BorderStyle.FixedSingle,
                 BackColor = LabelBackColor,
                 Cursor = Cursors.Hand,
-                Font = new Font(new FontFamily("Arial"), 16, FontStyle.Regular, GraphicsUnit.Pixel)
+                Font = new Font(new FontFamily("Arial"), 16, FontStyle.Regular, GraphicsUnit.Pixel),
+                Dock = DockStyle.Fill
             };
 
             label.Click += new EventHandler(OnLabelClick);
-
-            Controls.Add(label);
+            return label;
         }
 
         /// <summary>
@@ -169,7 +204,7 @@ namespace BasicLogisticLoop
         /// </summary>
         /// <param name="direction">One of the following strings: left, up, right, down, doubleHorizontal, doubleVertical</param>
         /// <param name="index">Number of arrows added. (Start with 0)</param>
-        private void CreateArrowLabel(string direction, int index)
+        private Label CreateArrowLabel(string direction, int index)
         {
             string arrow = "";
             switch (direction)
@@ -197,10 +232,11 @@ namespace BasicLogisticLoop
                 AutoSize = true,
                 BorderStyle = BorderStyle.None,
                 Cursor = Cursors.Default,
-                Font = new Font(new FontFamily("Arial"), 20, FontStyle.Regular, GraphicsUnit.Pixel)
+                Font = new Font(new FontFamily("Arial"), 20, FontStyle.Regular, GraphicsUnit.Pixel),
+                Dock = DockStyle.Fill
             };
 
-            Controls.Add(label);
+            return label;
         }
 
         /// <summary>
