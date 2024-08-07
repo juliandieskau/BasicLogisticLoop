@@ -85,7 +85,7 @@ namespace BasicLogisticLoop
         }
 
         /// <summary>
-        /// Event handler to be added to all Labels that calls the ShowContent() Method when a Label is clicked.
+        /// Method as Event handler to be added to all Labels that calls the ShowContent() Method when a Label is clicked.
         /// </summary>
         /// <param name="sender">Label that was clicked.</param>
         /// <param name="e"></param>
@@ -98,16 +98,27 @@ namespace BasicLogisticLoop
         }
 
         /// <summary>
-        /// Event handler to be added to all Buttons that calls the Presenter by building a fitting IInput object.
+        /// Method as Event handler to be added to all Buttons that calls the Presenter by building a fitting IInput object.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void OnButtonClick(object sender, EventArgs e)
         {
             Button button = sender as Button;
-            // Step Button
-            // Commissioning, Retrieval Button
+            // Step Button, Commissioning Button, Retrieval Button: let presenter update model with input (update model in view is called from presenter)
+            // Retrieval: Clear TextBox (or fill new random text)
             throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Method as Event handler to be added for TextBoxes to select all Text in the TextBox when clicked.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnTextBoxClick(object sender, EventArgs e)
+        {
+            TextBox textBox = sender as TextBox;
+            textBox.SelectAll();
         }
 
         /// <summary>

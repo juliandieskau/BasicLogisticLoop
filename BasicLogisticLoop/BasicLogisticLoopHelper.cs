@@ -79,6 +79,12 @@ namespace BasicLogisticLoop
                 /// <returns>Created Panel.</returns>
                 private TableLayoutPanel GenerateContainerPanel()
                 {
+                    TableLayoutPanel panel = new TableLayoutPanel
+                    {
+
+                    };
+                    
+                    return panel;
                     throw new NotImplementedException();
                 }
 
@@ -213,6 +219,31 @@ namespace BasicLogisticLoop
             button.Click += new EventHandler(OnButtonClick);
 
             return button;
+        }
+
+        /// <summary>
+        /// Method to generate a textbox to enter or display user input text.
+        /// </summary>
+        /// <param name="readOnly">True if for displaying text, false for entering.</param>
+        /// <returns>Generated TextBox.</returns>
+        private TextBox GenerateTextBox(bool readOnly)
+        {
+            string exampleText = ""; // TODO: generator for random text (lorem ipsum)
+
+            TextBox textBox = new TextBox
+            {
+                Name = readOnly ? "containerTextBox" : "retrievalTextBox",
+                ReadOnly = readOnly,
+                MaxLength = 400,
+                Multiline = true,
+                Text = exampleText,
+                Font = new Font(new FontFamily("Arial"), 16, FontStyle.Regular, GraphicsUnit.Pixel),
+                Dock = DockStyle.Fill
+            };
+
+            textBox.Click += new EventHandler(OnTextBoxClick);
+
+            return textBox;
         }
 
         // #################################################
