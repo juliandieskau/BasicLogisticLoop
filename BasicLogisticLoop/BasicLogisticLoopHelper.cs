@@ -16,7 +16,7 @@ namespace BasicLogisticLoop
 
         private const string LabelBaseName = "Label";
         private readonly Color LabelBackColor = Color.LightGray;
-        private readonly Color WindowBackColor = Color.White;
+        private readonly Color WindowBackColor = Color.WhiteSmoke;
 
         /// <summary>
         /// Method to generate a label based on a ViewNode object.
@@ -64,6 +64,7 @@ namespace BasicLogisticLoop
         /// </summary>
         /// <param name="direction">One of the following strings: left, up, right, down, horizontal, vertical</param>
         /// <param name="index">Number of arrows added. (Start with 0)</param>
+        /// <exception cref="ArgumentException">When the direction string doesn't match the given pattern.</exception>
         private Label GenerateArrowLabel(string direction, int index)
         {
             string arrow = "";
@@ -102,23 +103,49 @@ namespace BasicLogisticLoop
         }
 
         /// <summary>
-        /// Method to generate the button that controls retrieving items from the warehouse onto the retrieval node.
+        /// Method to generate a button for the view.
         /// </summary>
-        /// <param name="text">Text to display in the Button.</param>
+        /// <param name="buttonType">Type of button to generate: Match step, commission, retrieval</param>
         /// <returns>Generated Button.</returns>
-        private Button GenerateRetrievalButton(string text)
+        /// <exception cref="ArgumentException">When buttonType doesn't match the specified pattern.</exception>
+        private Button GenerateButton(string buttonType)
         {
-            throw new NotImplementedException();
-        }
+            // Apply Button attributes that are different per case
+            DockStyle dockStyle = DockStyle.None;
+            string buttonText = "";
 
-        /// <summary>
-        /// Method to generate a button for the lower panel of the model (Commission, Step).
-        /// </summary>
-        /// <param name="text">Text to display in the Button.</param>
-        /// <returns>Generated Button.</returns>
-        private Button GeneratePanelButton(string text)
-        {
-            throw new NotImplementedException();
+            switch (buttonType)
+            {
+                case "step":
+                    dockStyle = DockStyle.Right;
+                    buttonText = "Forward cycle one step";
+                    break;
+                case "commission":
+                    dockStyle = DockStyle.Right;
+                    buttonText = "Commission container";
+                    break;
+                case "retrieval":
+                    dockStyle = DockStyle.Fill;
+                    buttonText = "Retrieve container";
+                    break;
+                default:
+                    throw new ArgumentException("buttonType has to be either step, commission or retrieval!");
+            }
+
+            // Create Button
+            Button button = new Button
+            {
+                Name = buttonType + "Button",
+                Text = buttonText,
+                AutoSize = true,
+                BackColor = WindowBackColor,
+                Font = new Font(new FontFamily("Arial"), 16, FontStyle.Bold, GraphicsUnit.Pixel),
+                TextAlign = ContentAlignment.MiddleCenter
+            };
+
+            button.Click += new EventHandler(OnButtonClick);
+
+            return button;
         }
 
         /// <summary>
@@ -146,7 +173,7 @@ namespace BasicLogisticLoop
         }
 
         /// <summary>
-        /// Makes a string to use as names in labels for nodes of the model.
+        /// Makes a string to use as a name in labels for nodes of the model.
         /// </summary>
         /// <param name="type">NodeType to show which kind of node it is.</param>
         /// <param name="nodeID">ID to represent which node in the model it belongs to.</param>
@@ -157,14 +184,16 @@ namespace BasicLogisticLoop
         }
 
         /// <summary>
-        /// 
+        /// Makes a string to use as a name in labels for nodes of the arrows in the model.
         /// </summary>
-        /// <param name="direction"></param>
-        /// <param name="index"></param>
-        /// <returns></returns>
+        /// <param name="direction">Direction the arrow is pointing towards (left, up, right, down, horizontal, vertical).</param>
+        /// <param name="index">>Number of arrows added. (Start with 0)</param>
+        /// <returns>Name for arrow label.</returns>
         private string GetArrowLabelName(string direction, int index)
         {
             return direction + "Arrow" + LabelBaseName + index.ToString();
         }
+
+
     }
 }
