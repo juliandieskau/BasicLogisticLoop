@@ -50,7 +50,7 @@ namespace BasicLogisticLoop
 
             // Form settings
             Text = "Logisticloop Basic";
-            BackColor = WindowBackColor;
+            BackColor = BasicLogisticLoopHelper.WindowBackColor;
 
 
             // TODO generate Labels and InputWindows here
@@ -85,18 +85,28 @@ namespace BasicLogisticLoop
         }
 
         /// <summary>
-        /// Event handler to be added to all Labels that calls the Presenter by building a fitting IInput object.
+        /// Event handler to be added to all Labels that calls the ShowContent() Method when a Label is clicked.
         /// </summary>
         /// <param name="sender">Label that was clicked.</param>
         /// <param name="e"></param>
         private void OnLabelClick(object sender, EventArgs e)
         {
             Label label = sender as Label;
-            // For Step Label
             // For all Node Labels: 
             //      When clicked display its content in label on the side (ShowContent)
-            // For Commissioning, Retrieval:
-            //      When clicked also call 
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Event handler to be added to all Buttons that calls the Presenter by building a fitting IInput object.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnButtonClick(object sender, EventArgs e)
+        {
+            Button button = sender as Button;
+            // Step Button
+            // Commissioning, Retrieval Button
             throw new NotImplementedException();
         }
 
@@ -121,5 +131,22 @@ namespace BasicLogisticLoop
             MessageBox.Show(text: message + subMessage, caption: "Invalid action");
         }
 
+        /// <summary>
+        /// Method that generates a Panel that holds Labels that shows the content of the node label that is being clicked on.
+        /// </summary>
+        /// <returns>Created Panel.</returns>
+        private FlowLayoutPanel GenerateContentPanel()
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Method that generates a Panel that holds Labels and TextBoxes to input the content of containers retrieved from the warehouse.
+        /// </summary>
+        /// <returns>Created Panel.</returns>
+        private FlowLayoutPanel GenerateRetrievalPanel()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

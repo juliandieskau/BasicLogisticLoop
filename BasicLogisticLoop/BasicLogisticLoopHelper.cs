@@ -105,8 +105,10 @@ namespace BasicLogisticLoop
         /// <summary>
         /// Method to generate the button that controls retrieving items from the warehouse onto the retrieval node.
         /// </summary>
-        /// <returns></returns>
-        public static Button GenerateRetrievalButton()
+        /// <param name="text">Text to display in the Button.</param>
+        /// <param name="buttonClick">EventHandler of the View to be added on the ButtonClick event.</param>
+        /// <returns>Generated Button.</returns>
+        public static Button GenerateRetrievalButton(string text, EventHandler buttonClick)
         {
             throw new NotImplementedException();
         }
@@ -114,25 +116,10 @@ namespace BasicLogisticLoop
         /// <summary>
         /// Method to generate a button for the lower panel of the model (Commission, Step).
         /// </summary>
-        public static Button GeneratePanelButton()
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Method that generates a Panel that holds Labels that shows the content of the node label that is being clicked on.
-        /// </summary>
-        /// <returns>Created Panel.</returns>
-        public static FlowLayoutPanel GenerateContentPanel()
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Method that generates a Panel that holds Labels and TextBoxes to input the content of containers retrieved from the warehouse.
-        /// </summary>
-        /// <returns>Created Panel.</returns>
-        public static FlowLayoutPanel GenerateRetrievalPanel()
+        /// <param name="text">Text to display in the Button.</param>
+        /// <param name="buttonClick">EventHandler of the View to be added on the ButtonClick event.</param>
+        /// <returns>Generated Button.</returns>
+        public static Button GeneratePanelButton(string text, EventHandler buttonClick)
         {
             throw new NotImplementedException();
         }
