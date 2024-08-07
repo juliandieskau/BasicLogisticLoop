@@ -228,7 +228,7 @@ namespace BasicLogisticLoop
         /// <returns>Generated TextBox.</returns>
         private TextBox GenerateTextBox(bool readOnly)
         {
-            string exampleText = ""; // TODO: generator for random text (lorem ipsum)
+            string exampleText = GetRandomContainerContent(); // TODO: generator for random text (lorem ipsum)
 
             TextBox textBox = new TextBox
             {
@@ -241,7 +241,7 @@ namespace BasicLogisticLoop
                 Dock = DockStyle.Fill
             };
 
-            textBox.Click += new EventHandler(OnTextBoxClick);
+            textBox.DoubleClick += new EventHandler(OnTextBoxDoubleClick);
 
             return textBox;
         }
@@ -293,6 +293,34 @@ namespace BasicLogisticLoop
         private string GetArrowLabelName(string direction, int index)
         {
             return direction + "Arrow" + LabelBaseName + index.ToString();
+        }
+
+        /// <summary>
+        /// Returns a string of random words to be used as the content for a retrieved container, if not input by the user.
+        /// Uses an array of supermarket items to pick from.
+        /// </summary>
+        /// <returns>Generated word.</returns>
+        private string GetRandomContainerContent()
+        {
+            Random random = new Random();
+            string[] words = new string[]
+            {
+                "Mini Rispentomaten", "Passionsfrucht", "Nektarinen", "Mirabellen",
+                "Mix Tafeltrauben", "Wassermelone", "Saftorangen", "Staudensellerie",
+                "Romana Salatherzen", "Dunkle Bio Tafeltrauben", "Bananen", "Braune Champignons",
+                "Helle Bio Tafeltrauben", "Roma Rispentomaten", "Bio Broccoli", "Broccoli",
+                "Fleischtomaten", "Porree", "Heidelbeeren", "Paprika", "Bio Rispentomaten",
+                "Frischkäse", "Schokoladen Pudding", "Käseaufschnitt", "Schafskäse",
+                "Frucht Buttermilch", "Grillkäse", "Vegane Rostbratwürstchen", "High Protein Kirsch Pudding",
+                "Erbsenproteindrink", "Vegane Cordon bleu", "Tofu natur", "Mozarella light",
+                "Steinofen Ciabatta", "Bio Röstkaffee", "Erdbeer Konfitüre", "Bio Haferpops"
+            };
+            string content = "";
+            for (int i = 0; i < random.Next(9); i++)
+            {
+                content += words[random.Next(words.Length)] + Environment.NewLine;
+            }
+            return content += words[random.Next(words.Length)];
         }
     }
 }

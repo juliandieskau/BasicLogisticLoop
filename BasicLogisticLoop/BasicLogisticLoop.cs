@@ -115,7 +115,7 @@ namespace BasicLogisticLoop
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void OnTextBoxClick(object sender, EventArgs e)
+        private void OnTextBoxDoubleClick(object sender, EventArgs e)
         {
             TextBox textBox = sender as TextBox;
             textBox.SelectAll();
