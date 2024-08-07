@@ -11,19 +11,18 @@ using System.Xml.Linq;
 
 namespace BasicLogisticLoop
 {
-    internal static class BasicLogisticLoopHelper
+    public partial class BasicLogisticLoopForm
     {
 
-        public const string LabelBaseName = "Label";
-        public static readonly Color LabelBackColor = Color.LightGray;
-        public static readonly Color WindowBackColor = Color.White;
+        private const string LabelBaseName = "Label";
+        private readonly Color LabelBackColor = Color.LightGray;
+        private readonly Color WindowBackColor = Color.White;
 
         /// <summary>
         /// Method to generate a label based on a ViewNode object.
         /// </summary>
         /// <param name="node">ViewNode object to represent as a label.</param>
-        /// <param name="labelClick">labelClick: new EventHandler(OnLabelClick)</param>
-        public static Label GenerateNodeLabel(ViewNode node, EventHandler labelClick)
+        private Label GenerateNodeLabel(ViewNode node)
         {
             // Convert node data to string representation
             string nodeType = NodeTypeToString(node.Type);
@@ -55,7 +54,7 @@ namespace BasicLogisticLoop
             };
 
             // Add event handler
-            label.Click += new EventHandler(labelClick);
+            label.Click += new EventHandler(OnLabelClick);
 
             return label;
         }
@@ -65,7 +64,7 @@ namespace BasicLogisticLoop
         /// </summary>
         /// <param name="direction">One of the following strings: left, up, right, down, horizontal, vertical</param>
         /// <param name="index">Number of arrows added. (Start with 0)</param>
-        public static Label GenerateArrowLabel(string direction, int index)
+        private Label GenerateArrowLabel(string direction, int index)
         {
             string arrow = "";
             switch (direction)
@@ -106,9 +105,8 @@ namespace BasicLogisticLoop
         /// Method to generate the button that controls retrieving items from the warehouse onto the retrieval node.
         /// </summary>
         /// <param name="text">Text to display in the Button.</param>
-        /// <param name="buttonClick">EventHandler of the View to be added on the ButtonClick event.</param>
         /// <returns>Generated Button.</returns>
-        public static Button GenerateRetrievalButton(string text, EventHandler buttonClick)
+        private Button GenerateRetrievalButton(string text)
         {
             throw new NotImplementedException();
         }
@@ -117,9 +115,8 @@ namespace BasicLogisticLoop
         /// Method to generate a button for the lower panel of the model (Commission, Step).
         /// </summary>
         /// <param name="text">Text to display in the Button.</param>
-        /// <param name="buttonClick">EventHandler of the View to be added on the ButtonClick event.</param>
         /// <returns>Generated Button.</returns>
-        public static Button GeneratePanelButton(string text, EventHandler buttonClick)
+        private Button GeneratePanelButton(string text)
         {
             throw new NotImplementedException();
         }
@@ -129,7 +126,7 @@ namespace BasicLogisticLoop
         /// </summary>
         /// <param name="type">NodeType to display as text.</param>
         /// <returns>String to display.</returns>
-        public static string NodeTypeToString(NodeType type)
+        private string NodeTypeToString(NodeType type)
         {
             switch (type)
             {
@@ -154,7 +151,7 @@ namespace BasicLogisticLoop
         /// <param name="type">NodeType to show which kind of node it is.</param>
         /// <param name="nodeID">ID to represent which node in the model it belongs to.</param>
         /// <returns></returns>
-        public static string GetNodeLabelName(NodeType type, int nodeID)
+        private string GetNodeLabelName(NodeType type, int nodeID)
         {
             return NodeTypeToString(type) + LabelBaseName + nodeID.ToString();
         }
@@ -165,7 +162,7 @@ namespace BasicLogisticLoop
         /// <param name="direction"></param>
         /// <param name="index"></param>
         /// <returns></returns>
-        public static string GetArrowLabelName(string direction, int index)
+        private string GetArrowLabelName(string direction, int index)
         {
             return direction + "Arrow" + LabelBaseName + index.ToString();
         }

@@ -50,7 +50,7 @@ namespace BasicLogisticLoop
 
             // Form settings
             Text = "Logisticloop Basic";
-            BackColor = BasicLogisticLoopHelper.WindowBackColor;
+            BackColor = WindowBackColor;
 
 
             // TODO generate Labels and InputWindows here

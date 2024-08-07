@@ -52,7 +52,9 @@
     <Compile Include="BasicLogisticLoop.Designer.cs">
       <DependentUpon>BasicLogisticLoop.cs</DependentUpon>
     </Compile>
-    <Compile Include="BasicLogisticLoopHelper.cs" />
+    <Compile Include="BasicLogisticLoopHelper.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Model\AdjacencyMatrixGraph.cs" />
     <Compile Include="Model\BasicLoopLogisticModel.cs" />
     <Compile Include="Model\Container.cs" />
