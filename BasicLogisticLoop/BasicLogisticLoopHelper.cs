@@ -13,10 +13,77 @@ namespace BasicLogisticLoop
 {
     public partial class BasicLogisticLoopForm
     {
+        // CONSTANTS
 
         private const string LabelBaseName = "Label";
         private readonly Color LabelBackColor = Color.LightGray;
         private readonly Color WindowBackColor = Color.WhiteSmoke;
+
+        // #################################################
+        // PANEL GENERATOR METHODS
+
+        /// <summary>
+        /// FORM
+        /// Method that generates a container that splits the view in a left and right part.
+        /// </summary>
+        /// <returns>Created SplitContainer.</returns>
+        private SplitContainer GenerateSplitContainer()
+        {
+            throw new NotImplementedException();
+        }
+
+            /// <summary>
+            /// SPLIT CONTAINER Panel1
+            /// Method that generates a panel to hold the model and the buttons above each other.
+            /// </summary>
+            /// <returns></returns>
+            private TableLayoutPanel GenerateLeftPanel()
+            {
+                throw new NotImplementedException();
+            }
+
+                /// <summary>
+                /// LEFT PANEL
+                /// Method that generates a panel that holds all model data in a grid.
+                /// </summary>
+                /// <returns>Created Panel.</returns>
+                private TableLayoutPanel GenerateModelPanel()
+                {
+                    throw new NotImplementedException();
+                }
+
+                /// <summary>
+                /// LEFT PANEL
+                /// Method that generates a panel that holds the step and commission button.
+                /// </summary>
+                /// <returns>Created Panel.</returns>
+                private Panel GenerateButtonsPanel()
+                {
+                    throw new NotImplementedException();
+                }
+
+            /// <summary>
+            /// SPLIT CONTAINER Panel2
+            /// Method that generates a Panel that holds Labels, TextBoxes, Buttons and Panels for the Retrieval-Input and ShowContent.
+            /// </summary>
+            /// <returns>Created Panel.</returns>
+            private TableLayoutPanel GenerateRightPanel()
+            {
+                throw new NotImplementedException();
+            }
+
+                /// <summary>
+                /// RIGHT PANEL
+                /// Method that generates a Panel that holds Labels that shows the container of the node label that is being clicked on.
+                /// </summary>
+                /// <returns>Created Panel.</returns>
+                private TableLayoutPanel GenerateContainerPanel()
+                {
+                    throw new NotImplementedException();
+                }
+
+        // #################################################
+        // CONTROLS GENERATOR METHODS
 
         /// <summary>
         /// Method to generate a label based on a ViewNode object.
@@ -148,6 +215,9 @@ namespace BasicLogisticLoop
             return button;
         }
 
+        // #################################################
+        // HELPER METHODS
+
         /// <summary>
         /// Method to determine the text a certain node should be displayed as in the view.
         /// </summary>
@@ -193,7 +263,5 @@ namespace BasicLogisticLoop
         {
             return direction + "Arrow" + LabelBaseName + index.ToString();
         }
-
-
     }
 }

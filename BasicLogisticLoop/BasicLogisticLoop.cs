@@ -53,7 +53,7 @@ namespace BasicLogisticLoop
             BackColor = WindowBackColor;
 
 
-            // TODO generate Labels and InputWindows here
+            // TODO generate form objects here
             throw new NotImplementedException();
         }
 
@@ -129,24 +129,6 @@ namespace BasicLogisticLoop
         {
             string subMessage = Environment.NewLine + "Try again when valid.";
             MessageBox.Show(text: message + subMessage, caption: "Invalid action");
-        }
-
-        /// <summary>
-        /// Method that generates a Panel that holds Labels that shows the content of the node label that is being clicked on.
-        /// </summary>
-        /// <returns>Created Panel.</returns>
-        private FlowLayoutPanel GenerateContentPanel()
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Method that generates a Panel that holds Labels and TextBoxes to input the content of containers retrieved from the warehouse.
-        /// </summary>
-        /// <returns>Created Panel.</returns>
-        private FlowLayoutPanel GenerateRetrievalPanel()
-        {
-            throw new NotImplementedException();
         }
     }
 }
