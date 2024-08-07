@@ -31,7 +31,7 @@ namespace BasicLogisticLoop
         private List<ViewNode> NodeData;
 
         private const string LabelBaseName = "Label";
-        private readonly Color LabelBackColor = Color.White;
+        private readonly Color LabelBackColor = Color.LightGray;
         private readonly Color WindowBackColor = Color.White;
 
         /// <summary>
@@ -121,7 +121,7 @@ namespace BasicLogisticLoop
         /// <param name="message">Error message to display.</param>
         private void ShowErrorMessage(string message)
         {
-            string subMessage = "\n Try again when valid.";
+            string subMessage = Environment.NewLine + "Try again when valid.";
             MessageBox.Show(text: message + subMessage, caption: "Invalid action");
         }
 
@@ -141,7 +141,7 @@ namespace BasicLogisticLoop
             }
 
             string nodeName = GetNodeLabelName(node.Type, node.NodeID);
-            string nodeText = nodeType + nodeID + "\n" + "Content: " + containerTUI;
+            string nodeText = nodeType + nodeID + Environment.NewLine + "Content: " + containerTUI;
 
             // Create the label
             CreateLabel(name: nodeName, text: nodeText);
@@ -191,8 +191,10 @@ namespace BasicLogisticLoop
                 BorderStyle = BorderStyle.FixedSingle,
                 BackColor = LabelBackColor,
                 Cursor = Cursors.Hand,
-                Font = new Font(new FontFamily("Arial"), 16, FontStyle.Regular, GraphicsUnit.Pixel),
-                Dock = DockStyle.Fill
+                Font = new Font(new FontFamily("Arial"), 20, FontStyle.Regular, GraphicsUnit.Pixel),
+                Dock = DockStyle.Fill,
+                TextAlign = ContentAlignment.MiddleCenter,
+                Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right
             };
 
             label.Click += new EventHandler(OnLabelClick);
@@ -227,13 +229,15 @@ namespace BasicLogisticLoop
 
             Label label = new Label
             {
-                Name = direction + index.ToString(),
+                Name = GetArrowLabelName(direction, index),
                 Text = arrow,
                 AutoSize = true,
                 BorderStyle = BorderStyle.None,
                 Cursor = Cursors.Default,
-                Font = new Font(new FontFamily("Arial"), 20, FontStyle.Regular, GraphicsUnit.Pixel),
-                Dock = DockStyle.Fill
+                Font = new Font(new FontFamily("Arial"), 60, FontStyle.Regular, GraphicsUnit.Pixel),
+                Dock = DockStyle.Fill,
+                TextAlign = ContentAlignment.MiddleCenter,
+                Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right
             };
 
             return label;
@@ -249,15 +253,15 @@ namespace BasicLogisticLoop
             switch (type)
             {
                 case NodeType.Conveyor:
-                    return "";
+                    return "Conveyor";
                 case NodeType.Retrieval:
-                    return "R";
+                    return "Retrieval";
                 case NodeType.Storage:
-                    return "S";
+                    return "Storage";
                 case NodeType.Commissioning:
-                    return "C";
+                    return "Commissioning";
                 case NodeType.Warehouse:
-                    return "W";
+                    return "Warehouse";
                 default:
                     return "";
             }
@@ -272,6 +276,17 @@ namespace BasicLogisticLoop
         private string GetNodeLabelName(NodeType type, int nodeID)
         {
             return NodeTypeToString(type) + LabelBaseName + nodeID.ToString();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="direction"></param>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        private string GetArrowLabelName(string direction, int index)
+        {
+            return direction + "Arrow" + LabelBaseName + index.ToString();
         }
     }
 }
