@@ -166,6 +166,65 @@ namespace BasicLogisticLoop
             return label;
         }
 
+        private Label GenerateRightPanelLabel(string labelType) 
+        {
+            // default label attribute values
+            BorderStyle border = BorderStyle.None;
+            FontStyle fontStyle = FontStyle.Regular;
+            string text = "";
+
+            // special values depending on label
+            switch (labelType)
+            {
+                case "retrieval":
+                    text = "Retrieval";
+                    border = BorderStyle.FixedSingle;
+                    fontStyle = FontStyle.Bold;
+                    break;
+                case "nodeDetails":
+                    text = "Node Details";
+                    border = BorderStyle.FixedSingle;
+                    fontStyle = FontStyle.Bold;
+                    break;
+                case "container":
+                    text = "Container:";
+                    fontStyle = FontStyle.Bold; 
+                    break;
+                case "description":
+                    text = "Input content of next from" + Environment.NewLine + "warehouse retrieved container:";
+                    break;
+                case "nodeType":
+                    text = "Node Type: <select node>";
+                    break;
+                case "nodeID":
+                    text = "Node ID: <select node>";
+                    break;
+                case "tun":
+                    text = "TransportUnitNumber: <select node>";
+                    break;
+                case "destination":
+                    text = "Destination: <select node>";
+                    break;
+                case "content":
+                    text = "Content:";
+                    break;
+            }
+
+            // create label
+            Label label = new Label
+            {
+                Name = labelType + "Label",
+                Text = text,
+                TextAlign = ContentAlignment.MiddleLeft,
+                Font = new Font(new FontFamily("Arial"), 16, fontStyle, GraphicsUnit.Pixel),
+                AutoSize = true,
+                Dock = DockStyle.Fill,
+                BorderStyle = border
+            };
+
+            return label;
+        }
+
         /// <summary>
         /// Method to generate a button for the view.
         /// </summary>
@@ -204,7 +263,8 @@ namespace BasicLogisticLoop
                 AutoSize = true,
                 BackColor = WindowBackColor,
                 Font = new Font(new FontFamily("Arial"), 16, FontStyle.Bold, GraphicsUnit.Pixel),
-                TextAlign = ContentAlignment.MiddleCenter
+                TextAlign = ContentAlignment.MiddleCenter,
+                Dock = dockStyle
             };
 
             button.Click += new EventHandler(OnButtonClick);
