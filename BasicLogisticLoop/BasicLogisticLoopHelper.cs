@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Net.Mime.MediaTypeNames;
 using System.Xml.Linq;
+using BasicLogisticLoop.Model;
 
 namespace BasicLogisticLoop
 {
@@ -98,18 +99,8 @@ namespace BasicLogisticLoop
         private Label GenerateNodeLabel(ViewNode node)
         {
             // Convert node data to string representation
-            string nodeType = NodeTypeToString(node.Type);
-            string nodeID = node.NodeID.ToString();
-            string containerTUN = "";
-            if (node.Container != null)
-            {
-                containerTUN = node.Container.TransportUnitNumber.ToString();
-            }
-
             string nodeName = GetNodeLabelName(node.Type, node.NodeID);
-            string nodeText = nodeID + " " + nodeType + Environment.NewLine +
-                                Environment.NewLine +
-                                containerTUN;
+            string nodeText = GenerateNodeLabelText(node.NodeID, node.Type, node.Container);
 
             // Create the label
             Label label = new Label
@@ -222,13 +213,13 @@ namespace BasicLogisticLoop
         }
 
         /// <summary>
-        /// Method to generate a textbox to enter or display user input text.
+        /// Method to generate a textbox to enter or display text input by a user.
         /// </summary>
         /// <param name="readOnly">True if for displaying text, false for entering.</param>
         /// <returns>Generated TextBox.</returns>
         private TextBox GenerateTextBox(bool readOnly)
         {
-            string exampleText = GetRandomContainerContent(); // TODO: generator for random text (lorem ipsum)
+            string exampleText = GetRandomContainerContent(); // generator for random text (supermarket products)
 
             TextBox textBox = new TextBox
             {
@@ -274,18 +265,18 @@ namespace BasicLogisticLoop
         }
 
         /// <summary>
-        /// Makes a string to use as a name in labels for nodes of the model.
+        /// The string to use as a name in labels for nodes of the model.
         /// </summary>
         /// <param name="type">NodeType to show which kind of node it is.</param>
         /// <param name="nodeID">ID to represent which node in the model it belongs to.</param>
-        /// <returns></returns>
+        /// <returns>string that should be set as the Label.Name property.</returns>
         private string GetNodeLabelName(NodeType type, int nodeID)
         {
             return NodeTypeToString(type) + LabelBaseName + nodeID.ToString();
         }
 
         /// <summary>
-        /// Makes a string to use as a name in labels for nodes of the arrows in the model.
+        /// The string to use as a name in labels for nodes of the arrows in the model.
         /// </summary>
         /// <param name="direction">Direction the arrow is pointing towards (left, up, right, down, horizontal, vertical).</param>
         /// <param name="index">>Number of arrows added. (Start with 0)</param>
@@ -296,10 +287,29 @@ namespace BasicLogisticLoop
         }
 
         /// <summary>
+        /// Generates the text to display on a label in the model part of the view.
+        /// </summary>
+        /// <param name="nodeID">ID to represent which node in the model it belongs to.</param>
+        /// <param name="nodeType">Type of the node to display</param>
+        /// <param name="containerTUN">TransportUnit Number of the container on the node.</param>
+        /// <returns></returns>
+        private string GenerateNodeLabelText(int nodeID, NodeType nodeType, Container container)
+        {
+            string containerTUN = "";
+            if (container != null)
+            {
+                containerTUN = container.TransportUnitNumber.ToString();
+            }
+            return nodeID.ToString() + " " + NodeTypeToString(nodeType) + Environment.NewLine +
+                                Environment.NewLine +
+                                containerTUN;
+        }
+
+        /// <summary>
         /// Returns a string of random words to be used as the content for a retrieved container, if not input by the user.
         /// Uses an array of supermarket items to pick from.
         /// </summary>
-        /// <returns>Generated word.</returns>
+        /// <returns>Generated string of words.</returns>
         private string GetRandomContainerContent()
         {
             Random random = new Random();

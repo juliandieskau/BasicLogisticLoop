@@ -50,8 +50,14 @@ namespace BasicLogisticLoop.Model
         /// Contains all the Conveyor, Retrieval, Storage, Commissioning and Warehouse nodes.
         /// </summary>
         /// <returns>List of ViewNodes that represent the current model state.</returns>
+        /// <exception cref="NullReferenceException">When Graph is empty.</exception>
         public List<ViewNode> GetViewNodes()
         {
+            if (GraphNodes == null)
+            {
+                throw new NullReferenceException("Graph is empty!");
+            }
+
             List<ViewNode> transformedNodes = new List<ViewNode>();
             // Add all the graph nodes
             foreach (var node in GraphNodes)
