@@ -52,9 +52,8 @@ namespace BasicLogisticLoop
             Text = "Logisticloop Basic";
             BackColor = WindowBackColor;
 
-
-            // TODO generate form objects here
-            throw new NotImplementedException();
+            // generate form controls here
+            Controls.Add(GenerateSplitContainer());
         }
 
         /// <summary>

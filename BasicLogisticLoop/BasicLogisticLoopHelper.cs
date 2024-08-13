@@ -26,7 +26,7 @@ namespace BasicLogisticLoop
         /// <summary>
         /// FORM
         /// Method that generates a container that splits the view in a left and right part.
-        /// Calls all other generating methods, so only call this once.
+        /// Calls all other generating methods, so only call this once. 
         /// </summary>
         /// <returns>Created SplitContainer.</returns>
         private SplitContainer GenerateSplitContainer()
@@ -83,6 +83,27 @@ namespace BasicLogisticLoop
         /// <returns>Created Panel.</returns>
         private TableLayoutPanel GenerateModelPanel()
         {
+            // Check size of model (min and max coordinate(x, y) values of viewnodes)
+            // Generate panel with columns and rows with size
+
+            foreach (ViewNode node in NodeData)
+            {
+                // Generate model labels and place them on the even numbered rows and columns (0, 2, 4, ...)
+                // depending on the ViewNode.Coordinates (transform them)
+
+                // Generate arrow labels by checking ViewNode.FollowingNodes
+                // placing the arrow in the mean of the node and each following node (if distance is 2 rows/columns)
+                foreach (int followingID in node.FollowingNodes)
+                {
+                    ViewNode followingNode = NodeData.Find(n => n.NodeID == followingID);
+
+                    // calculate the arrows direction 
+                    string direction = GetArrowDirection(node.Coordinates, followingNode.Coordinates);
+
+                    // If label already has an arrow (in other direction), make it a double arrow
+                }
+            }
+            
             throw new NotImplementedException();
         }
 
@@ -500,6 +521,44 @@ namespace BasicLogisticLoop
                 content += words[random.Next(words.Length)] + Environment.NewLine;
             }
             return content += words[random.Next(words.Length)];
+        }
+
+        // #################################################
+        // MODEL METHODS
+
+        /// <summary>
+        /// Calculates the direction an arrow should be pointing towards depending on the coordinates of the two nodes.
+        /// Diagonal direction not possible.
+        /// </summary>
+        /// <param name="fromCoords">x and y coordinates of node the arrow starts from.</param>
+        /// <param name="toCoords">x and y coordinates of node the arrow points towards.</param>
+        /// <returns>left, up, right, down</returns>
+        /// <exception cref="ArgumentException">When coordinates not adjacent in a grid towards each other.</exception>
+        private string GetArrowDirection((int x, int y) fromCoords, (int x, int y) toCoords)
+        {
+            if (fromCoords.x > toCoords.x && fromCoords.y == toCoords.y)
+            {
+                return "left";
+            } 
+            else if (fromCoords.x < toCoords.x && fromCoords.y == toCoords.y)
+            {
+                return "right";
+            }
+            else if (fromCoords.x == toCoords.x && fromCoords.y > toCoords.y)
+            {
+                return "down";
+            }
+            else if (fromCoords.x == toCoords.x && fromCoords.y < toCoords.y)
+            {
+                return "up";
+            }
+            else
+            {
+                string message = "Connecting model-nodes only possible when coordinates are adjacent in a grid: (" + 
+                    fromCoords.x.ToString() + ", " + fromCoords.y.ToString() + ") -> (" +
+                    toCoords.x.ToString() + ", " + toCoords.y.ToString() + ")";
+                throw new ArgumentException(message);
+            }
         }
     }
 }
