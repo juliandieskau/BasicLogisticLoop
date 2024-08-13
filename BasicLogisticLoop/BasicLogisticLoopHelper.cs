@@ -53,15 +53,28 @@ namespace BasicLogisticLoop
                     throw new NotImplementedException();
                 }
 
-                /// <summary>
-                /// LEFT PANEL
-                /// Method that generates a panel that holds the step and commission button.
-                /// </summary>
-                /// <returns>Created Panel.</returns>
-                private Panel GenerateButtonsPanel()
-                {
-                    throw new NotImplementedException();
-                }
+        /// <summary>
+        /// LEFT PANEL
+        /// Method that generates a panel that holds the step and commission button.
+        /// </summary>
+        /// <returns>Created Panel.</returns>
+        private Panel GenerateButtonsPanel()
+        {
+            Panel panel = new Panel()
+            {
+                BorderStyle = BorderStyle.None,
+                RightToLeft = RightToLeft.Yes,
+                Name = "buttonsPanel",
+                Dock = DockStyle.Fill,
+                AutoSize = false
+            };
+
+            // create and add buttons from right to left
+            panel.Controls.Add(GenerateButton("step"));
+            panel.Controls.Add(GenerateButton("commission"));
+
+            return panel;
+        }
 
         /// <summary>
         /// SPLIT CONTAINER Panel2
