@@ -73,21 +73,46 @@ namespace BasicLogisticLoop
                 throw new NotImplementedException();
             }
 
-                /// <summary>
-                /// RIGHT PANEL
-                /// Method that generates a Panel that holds Labels that shows the container of the node label that is being clicked on.
-                /// </summary>
-                /// <returns>Created Panel.</returns>
-                private TableLayoutPanel GenerateContainerPanel()
-                {
-                    TableLayoutPanel panel = new TableLayoutPanel
-                    {
+        /// <summary>
+        /// RIGHT PANEL
+        /// Method that generates a Panel that holds Labels that shows the container of the node label that is being clicked on.
+        /// </summary>
+        /// <returns>Created Panel.</returns>
+        private TableLayoutPanel GenerateContainerPanel()
+        {
+            TableLayoutPanel panel = new TableLayoutPanel
+            {
+                CellBorderStyle = TableLayoutPanelCellBorderStyle.Single,
+                Name = "containerTableLayoutPanel",
+                AutoSize = true,
+                Dock = DockStyle.Fill,
+                ColumnCount = 1,
+                RowCount = 4
+            };
 
-                    };
-                    
-                    return panel;
-                    throw new NotImplementedException();
-                }
+            // create tunLabel, destinationLabel, contentLabel, containerTextBox
+            Label tunLabel = GenerateRightPanelLabel(labelType: "tun");
+            Label destinationLabel = GenerateRightPanelLabel(labelType: "destination");
+            Label contentLabel = GenerateRightPanelLabel(labelType: "content");
+            TextBox containerTextBox = GenerateTextBox(true);
+
+            // make sure each control is in the right row (through attached properties)
+            panel.SetRow(tunLabel, 0);
+            panel.SetRow(destinationLabel, 1);
+            panel.SetRow(contentLabel, 2);
+            panel.SetRow(containerTextBox, 3);
+
+            // add controls to panel
+            panel.Controls.AddRange(new Control[] {tunLabel, destinationLabel, contentLabel, containerTextBox});
+
+            // set rows size
+            panel.RowStyles.Insert(0, new RowStyle(SizeType.AutoSize));
+            panel.RowStyles.Insert(1, new RowStyle(SizeType.AutoSize));
+            panel.RowStyles.Insert(2, new RowStyle(SizeType.AutoSize));
+            panel.RowStyles.Insert(3, new RowStyle(SizeType.Absolute, 200));
+
+            return panel;
+        }
 
         // #################################################
         // CONTROLS GENERATOR METHODS
@@ -166,6 +191,11 @@ namespace BasicLogisticLoop
             return label;
         }
 
+        /// <summary>
+        /// Generates a label for the right panel of the view. Outputs labels with attributes depending on the given labelType.
+        /// </summary>
+        /// <param name="labelType">retrieval, nodeDetails, container, description, nodeType, nodeID, tun, destination, content</param>
+        /// <returns>Label with corresponding attributes.</returns>
         private Label GenerateRightPanelLabel(string labelType) 
         {
             // default label attribute values
