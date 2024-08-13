@@ -33,25 +33,44 @@ namespace BasicLogisticLoop
             throw new NotImplementedException();
         }
 
-            /// <summary>
-            /// SPLIT CONTAINER Panel1
-            /// Method that generates a panel to hold the model and the buttons above each other.
-            /// </summary>
-            /// <returns></returns>
-            private TableLayoutPanel GenerateLeftPanel()
+        /// <summary>
+        /// SPLIT CONTAINER Panel1
+        /// Method that generates a panel to hold the model and the buttons above each other.
+        /// </summary>
+        /// <returns></returns>
+        private TableLayoutPanel GenerateLeftPanel()
+        {
+            TableLayoutPanel panel = new TableLayoutPanel()
             {
-                throw new NotImplementedException();
-            }
+                CellBorderStyle = TableLayoutPanelCellBorderStyle.None,
+                Name = "leftTableLayoutPanel",
+                AutoSize = false,
+                Dock = DockStyle.None,
+                ColumnCount = 1,
+                RowCount = 2,
+                GrowStyle = TableLayoutPanelGrowStyle.FixedSize
+            };
 
-                /// <summary>
-                /// LEFT PANEL
-                /// Method that generates a panel that holds all model data in a grid.
-                /// </summary>
-                /// <returns>Created Panel.</returns>
-                private TableLayoutPanel GenerateModelPanel()
-                {
-                    throw new NotImplementedException();
-                }
+            // add model and buttons above one another
+            panel.Controls.Add(GenerateModelPanel());
+            panel.Controls.Add(GenerateButtonsPanel());
+
+            // set rows size
+            panel.RowStyles[0] = new RowStyle(SizeType.Percent, 6.0f);
+            panel.RowStyles[1] = new RowStyle(SizeType.Percent, 6.0f);
+
+            return panel;
+        }
+
+        /// <summary>
+        /// LEFT PANEL
+        /// Method that generates a panel that holds all model data in a grid.
+        /// </summary>
+        /// <returns>Created Panel.</returns>
+        private TableLayoutPanel GenerateModelPanel()
+        {
+            throw new NotImplementedException();
+        }
 
         /// <summary>
         /// LEFT PANEL
