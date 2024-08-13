@@ -26,11 +26,25 @@ namespace BasicLogisticLoop
         /// <summary>
         /// FORM
         /// Method that generates a container that splits the view in a left and right part.
+        /// Calls all other generating methods, so only call this once.
         /// </summary>
         /// <returns>Created SplitContainer.</returns>
         private SplitContainer GenerateSplitContainer()
         {
-            throw new NotImplementedException();
+            SplitContainer splitContainer = new SplitContainer()
+            {
+                BorderStyle = BorderStyle.FixedSingle,
+                Name = "splitContainer",
+                Dock = DockStyle.Fill,
+                IsSplitterFixed = true,
+                SplitterDistance = 1200
+            };
+
+            // add left and right panel 
+            splitContainer.Panel1.Controls.Add(GenerateLeftPanel());
+            splitContainer.Panel2.Controls.Add(GenerateRightPanel());
+
+            return splitContainer;
         }
 
         /// <summary>
