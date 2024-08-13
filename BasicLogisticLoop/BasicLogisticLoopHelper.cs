@@ -83,8 +83,84 @@ namespace BasicLogisticLoop
         /// <returns>Created Panel.</returns>
         private TableLayoutPanel GenerateModelPanel()
         {
-            // Check size of model (min and max coordinate(x, y) values of viewnodes)
+            // Get size of model (min and max coordinate(x, y) values of viewnodes)
+            (int x, int y) minModelCords = (Int32.MaxValue, Int32.MaxValue);
+            (int x, int y) maxModelCords = (Int32.MinValue, Int32.MinValue);
+            foreach (ViewNode node in NodeData)
+            {
+                // if any coordinate in the model is outside of the current bounds, widen the bounds
+                if (node.Coordinates.X < minModelCords.x)
+                {
+                    minModelCords.x = node.Coordinates.X;
+                }
+                if (node.Coordinates.Y < minModelCords.y)
+                {
+                    minModelCords.y = node.Coordinates.Y;
+                }
+                if (node.Coordinates.X > maxModelCords.x)
+                {
+                    maxModelCords.x = node.Coordinates.X;
+                }
+                if (node.Coordinates.Y > maxModelCords.y)
+                {
+                    maxModelCords.y = node.Coordinates.Y;
+                }
+            }
+
+            // Transform into size of view, where between every coordinate of the model a coordinate for arrows gets inserted
+            (int x, int y) modelSize = (Math.Abs(maxModelCords.x - minModelCords.x),
+                                       Math.Abs(maxModelCords.y - minModelCords.y));
+            (int x, int y) viewSize = ((modelSize.x * 2) - 1, (modelSize.y * 2) - 1);
+
             // Generate panel with columns and rows with size
+            TableLayoutPanel panel = new TableLayoutPanel()
+            {
+                CellBorderStyle = TableLayoutPanelCellBorderStyle.None,
+                Name = "modelTableLayoutPanel",
+                AutoSize = false,
+                Dock = DockStyle.None,
+                Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right,
+                ColumnCount = viewSize.y,
+                RowCount = viewSize.x,
+            };
+
+            // Calculate the column and row sizes so that a node- is double the size of an arrow-label
+            int dividerX = (modelSize.x * 3) - 1;
+            int dividerY = (modelSize.y * 3) - 1;
+            float arrowSizeXPercent = 100.0f / dividerX;
+            float arrowSizeYPercent = 100.0f / dividerY;
+            float nodeSizeXPercent = arrowSizeXPercent * 2;
+            float nodeSizeYPercent = arrowSizeYPercent * 2;
+
+            // Set the size type and value of each row and column
+            for (int x = 0; x < viewSize.x; x++)
+            {
+                // Columns
+                if (x % 2 == 0)
+                {
+                    // Node Labels
+                    panel.ColumnStyles[x] = new ColumnStyle(SizeType.Percent, nodeSizeXPercent);
+                } 
+                else
+                {
+                    // Arrow Labels
+                    panel.ColumnStyles[x] = new ColumnStyle(SizeType.Percent, arrowSizeXPercent);
+                }
+            }
+            for (int y = 0; y < viewSize.y; y++)
+            {
+                // Rows
+                if (y % 2 == 0)
+                {
+                    // Node Labels
+                    panel.RowStyles[y] = new RowStyle(SizeType.Percent, nodeSizeYPercent);
+                }
+                else
+                {
+                    // Arrow Labels
+                    panel.RowStyles[y] = new RowStyle(SizeType.Percent, arrowSizeYPercent);
+                }
+            }
 
             foreach (ViewNode node in NodeData)
             {

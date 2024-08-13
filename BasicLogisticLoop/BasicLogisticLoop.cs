@@ -48,7 +48,7 @@ namespace BasicLogisticLoop
         {
             NodeData = initialViewNodes;
 
-            // Form settings
+            // Form properties
             Text = "Logisticloop Basic";
             BackColor = WindowBackColor;
             Name = "BasicLogisticLoop";
