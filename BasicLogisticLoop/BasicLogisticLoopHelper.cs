@@ -6,8 +6,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using static System.Net.Mime.MediaTypeNames;
-using System.Xml.Linq;
 using BasicLogisticLoop.Model;
 
 namespace BasicLogisticLoop
@@ -166,30 +164,63 @@ namespace BasicLogisticLoop
                 }
             }
 
+            int arrowNumber = 0;
             foreach (ViewNode node in NodeData)
             {
                 // Generate model labels and place them on the even numbered rows and columns (0, 2, 4, ...)
                 // depending on the transformed ViewNode.Coordinates
-                (int column, int row) panelPosition = TransformCoordinatesModelToView(node.Coordinates);
-                Label label = GenerateNodeLabel(node);
+                (int column, int row) nodePosition = TransformCoordinatesModelToView(node.Coordinates);
+                Label nodeLabel = GenerateNodeLabel(node);
 
-                panel.SetRow(label, panelPosition.row);
-                panel.SetColumn(label, panelPosition.column);
+                panel.SetRow(nodeLabel, nodePosition.row);
+                panel.SetColumn(nodeLabel, nodePosition.column);
+                panel.Controls.Add(nodeLabel);
 
                 // Generate arrow labels by checking ViewNode.FollowingNodes
                 // placing the arrow in the mean of the node and each following node (if distance is 2 rows/columns)
                 foreach (int followingID in node.FollowingNodes)
                 {
                     ViewNode followingNode = NodeData.Find(n => n.NodeID == followingID);
+                    // check if arrow can be validly placed
+                    if (ArrowIsPlacable(node.Coordinates, followingNode.Coordinates))
+                    {
+                        // calculate the arrows position in the panel
+                        (int column, int row) arrowPosition = TransformCoordinatesModelToView(followingNode.Coordinates);
+                        int arrowColumnPos = (nodePosition.column + arrowPosition.column) / 2;
+                        int arrowRowPos = (nodePosition.row + arrowPosition.row) / 2;
 
-                    // calculate the arrows direction 
-                    string direction = GetArrowDirection(node.Coordinates, followingNode.Coordinates);
+                        // calculate the arrows direction 
+                        string direction = GetArrowDirection(node.Coordinates, followingNode.Coordinates);
 
-                    // If label already has an arrow (in other direction), make it a double arrow
+                        // Check if panel already has an arrow (in other direction) on the given row and column
+                        bool hasLabel = false;
+                        foreach (Label existingLabel in panel.Controls.OfType<Label>())
+                        {
+                            if (panel.GetColumn(existingLabel) == arrowColumnPos && panel.GetRow(existingLabel) == arrowRowPos)
+                            {
+                                hasLabel = true;
+
+                                // make the arrow of the existing label a double arrow
+                                existingLabel.Text = DoubleArrow(existingLabel.Text);
+                            }
+                        }
+
+                        if (!hasLabel)
+                        {
+                            // otherwise place arrow label on panel
+                            Label arrowLabel = GenerateArrowLabel(direction, arrowNumber++);
+                            panel.SetColumn(arrowLabel, arrowColumnPos);
+                            panel.SetRow(arrowLabel, arrowRowPos);
+                            panel.Controls.Add(arrowLabel);
+                        }
+
+                        // arrow label is now placed if valid
+                    }
+                    // if not valid, just skip the edge without throwing an error (shouldn't happen anyway :D)
                 }
             }
             
-            throw new NotImplementedException();
+            return panel;
         }
 
         /// <summary>
@@ -333,7 +364,7 @@ namespace BasicLogisticLoop
         /// <summary>
         /// Method to create arrows that point between node labels to show to flow of containers in the model. 
         /// </summary>
-        /// <param name="direction">One of the following strings: left, up, right, down, horizontal, vertical</param>
+        /// <param name="direction">One of the following strings: left, up, right, down</param>
         /// <param name="index">Number of arrows added. (Start with 0)</param>
         /// <exception cref="ArgumentException">When the direction string doesn't match the given pattern.</exception>
         private Label GenerateArrowLabel(string direction, int index)
@@ -349,10 +380,6 @@ namespace BasicLogisticLoop
                     arrow = "\u21D2"; break;
                 case "down":
                     arrow = "\u21D3"; break;
-                case "horizontal":
-                    arrow = "\u21D4"; break;
-                case "vertical":
-                    arrow = "\u21D5"; break;
                 default:
                     throw new ArgumentException("Not a valid direction string.");
             }
@@ -656,6 +683,48 @@ namespace BasicLogisticLoop
 
             // expand the model coordinates over just the even columns/rows
             return (offsetX * 2, offsetY * 2);
+        }
+
+        /// <summary>
+        /// Checks whether two given nodes are adjacent to each other in the models coordinate system.
+        /// An edge towards a node that is further away than directly next to the node or on a diagonal is invalid.
+        /// </summary>
+        /// <param name="fromCoordinates">Coordinates to check edge from.</param>
+        /// <param name="toCoordinates">Coordinates to check edge towards.</param>
+        /// <returns><c>true</c> if edge is valid.</returns>
+        private bool ArrowIsPlacable((int x, int y) fromCoordinates, (int x, int y) toCoordinates)
+        {
+            // either they are directly besides each other on the x axis or y axis
+            // if both are true its diagonal and also not valid
+            if ((Math.Abs(fromCoordinates.x - toCoordinates.x) == 1 && fromCoordinates.y == toCoordinates.y) ^ 
+                (Math.Abs(fromCoordinates.y - toCoordinates.y) == 1 && fromCoordinates.x == toCoordinates.x))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Takes a given arrow string and makes a double arrow in the horizontal or vertical direction given the existing direction. TODO: make the arrow codes into an enum
+        /// </summary>
+        /// <param name="singleArrow">\u21D0, \u21D1, \u21D2 or \u21D3</param>
+        /// <returns>\u21D4 or \u21D5</returns>
+        /// <exception cref="ArgumentException">If singleArrow is not one of the given strings.</exception>
+        private string DoubleArrow(string singleArrow)
+        {
+            switch (singleArrow)
+            {
+                case "\u21D0":      //left
+                    return "\u21D4";    //horizontal
+                case "\u21D1":      //up
+                    return "\u21D5";    //vertical
+                case "\u21D2":      //right
+                    return "\u21D4";    //horizontal
+                case "\u21D3":      //down
+                    return "\u21D5";    //vertical
+                default:
+                    throw new ArgumentException("Not a valid arrow string.");
+            }
         }
     }
 }
