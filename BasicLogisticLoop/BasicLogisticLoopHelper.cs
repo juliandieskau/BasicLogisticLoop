@@ -63,15 +63,18 @@ namespace BasicLogisticLoop
                     throw new NotImplementedException();
                 }
 
-            /// <summary>
-            /// SPLIT CONTAINER Panel2
-            /// Method that generates a Panel that holds Labels, TextBoxes, Buttons and Panels for the Retrieval-Input and ShowContent.
-            /// </summary>
-            /// <returns>Created Panel.</returns>
-            private TableLayoutPanel GenerateRightPanel()
-            {
-                throw new NotImplementedException();
-            }
+        /// <summary>
+        /// SPLIT CONTAINER Panel2
+        /// Method that generates a Panel that holds Labels, TextBoxes, Buttons and Panels for the Retrieval-Input and ShowContent.
+        /// </summary>
+        /// <returns>Created Panel.</returns>
+        private TableLayoutPanel GenerateRightPanel()
+        {
+            
+
+
+            throw new NotImplementedException();
+        }
 
         /// <summary>
         /// RIGHT PANEL
