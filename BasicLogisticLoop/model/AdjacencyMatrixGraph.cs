@@ -41,13 +41,13 @@ namespace BasicLogisticLoop.Model
         public AdjacencyMatrixGraph(int nodeNumber, int[,] edgeRepresentation) : this(nodeNumber)
         {
             // Check argument correctness
-            if (edgeRepresentation.GetLength(0) != nodeNumber || edgeRepresentation.GetLength(1) != 3)
+            if (edgeRepresentation.GetLength(1) != 3)
             {
                 throw new ArgumentException("edgeRepresentation array needs to be of size [nodeNumber, 3]");
             }
 
             // Fill Graph
-            for (int i = 0; i < nodeNumber; i++)
+            for (int i = 0; i < edgeRepresentation.GetLength(0); i++)
             {
                 this.AddEdge(edgeRepresentation[i,0], edgeRepresentation[i,1], edgeRepresentation[i,2]);
             }

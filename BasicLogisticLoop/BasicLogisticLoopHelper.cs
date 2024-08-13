@@ -20,6 +20,10 @@ namespace BasicLogisticLoop
         private readonly Color LabelBackColor = Color.LightGray;
         private readonly Color WindowBackColor = Color.WhiteSmoke;
 
+        // VARIABLES
+
+        private (int x, int y) minModelCords, maxModelCords;
+
         // #################################################
         // PANEL GENERATOR METHODS
 
@@ -84,8 +88,8 @@ namespace BasicLogisticLoop
         private TableLayoutPanel GenerateModelPanel()
         {
             // Get size of model (min and max coordinate(x, y) values of viewnodes)
-            (int x, int y) minModelCords = (Int32.MaxValue, Int32.MaxValue);
-            (int x, int y) maxModelCords = (Int32.MinValue, Int32.MinValue);
+            minModelCords = (Int32.MaxValue, Int32.MaxValue);
+            maxModelCords = (Int32.MinValue, Int32.MinValue);
             foreach (ViewNode node in NodeData)
             {
                 // if any coordinate in the model is outside of the current bounds, widen the bounds
@@ -165,7 +169,12 @@ namespace BasicLogisticLoop
             foreach (ViewNode node in NodeData)
             {
                 // Generate model labels and place them on the even numbered rows and columns (0, 2, 4, ...)
-                // depending on the ViewNode.Coordinates (transform them)
+                // depending on the transformed ViewNode.Coordinates
+                (int column, int row) panelPosition = TransformCoordinatesModelToView(node.Coordinates);
+                Label label = GenerateNodeLabel(node);
+
+                panel.SetRow(label, panelPosition.row);
+                panel.SetColumn(label, panelPosition.column);
 
                 // Generate arrow labels by checking ViewNode.FollowingNodes
                 // placing the arrow in the mean of the node and each following node (if distance is 2 rows/columns)
@@ -269,9 +278,6 @@ namespace BasicLogisticLoop
                 ColumnCount = 1,
                 RowCount = 4
             };
-
-            // make sure each control is in the right row (through attached properties)
-            //panel.SetRow(tunLabel, 0);
 
             // create controls and add to panel in order
             panel.Controls.AddRange(new Control[] { 
@@ -635,6 +641,21 @@ namespace BasicLogisticLoop
                     toCoords.x.ToString() + ", " + toCoords.y.ToString() + ")";
                 throw new ArgumentException(message);
             }
+        }
+
+        /// <summary>
+        /// Calculates the row and column in the view where the label of the node with given coordinates will be placed.
+        /// </summary>
+        /// <param name="coordinates">Coordinates of the node in the model.</param>
+        /// <returns>Integer tuple (column, row) of position in model table.</returns>
+        private (int column, int row) TransformCoordinatesModelToView((int x, int y) coordinates)
+        {
+            // offset the model coordinates to begin at 0
+            int offsetX = coordinates.x - minModelCords.x;
+            int offsetY = coordinates.y - minModelCords.y;
+
+            // expand the model coordinates over just the even columns/rows
+            return (offsetX * 2, offsetY * 2);
         }
     }
 }
