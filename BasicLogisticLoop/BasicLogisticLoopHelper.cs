@@ -70,10 +70,44 @@ namespace BasicLogisticLoop
         /// <returns>Created Panel.</returns>
         private TableLayoutPanel GenerateRightPanel()
         {
-            
+            TableLayoutPanel panel = new TableLayoutPanel()
+            {
+                CellBorderStyle = TableLayoutPanelCellBorderStyle.None,
+                Name = "rightTableLayoutPanel",
+                AutoSize = true,
+                Dock = DockStyle.Bottom,
+                ColumnCount = 1,
+                RowCount = 9,
+            };
 
+            // create and add controls in backwards order (DockStyle.Bottom -> first is at the bottom and then stack on top)
+            panel.Controls.AddRange(new Control[]
+            {
+                GenerateContainerPanel(),
+                GenerateRightPanelLabel("container"),
+                GenerateRightPanelLabel("nodeID"),
+                GenerateRightPanelLabel("nodeType"),
+                GenerateRightPanelLabel("nodeDetails"),
+                GenerateButton("retrieval"),
+                GenerateTextBox(false),
+                GenerateRightPanelLabel("description"),
+                GenerateRightPanelLabel("retrieval")
+            });
 
-            throw new NotImplementedException();
+            // set rows size
+            for (int index = 0; index < 9; index++)
+            {
+                if (index == 2)
+                {
+                    panel.RowStyles[index] = new RowStyle(SizeType.Absolute, 200); // TextBox
+                }
+                else
+                {
+                    panel.RowStyles[index] = new RowStyle(SizeType.AutoSize);
+                }
+            }
+
+            return panel;
         }
 
         /// <summary>
@@ -93,26 +127,22 @@ namespace BasicLogisticLoop
                 RowCount = 4
             };
 
-            // create tunLabel, destinationLabel, contentLabel, containerTextBox
-            Label tunLabel = GenerateRightPanelLabel(labelType: "tun");
-            Label destinationLabel = GenerateRightPanelLabel(labelType: "destination");
-            Label contentLabel = GenerateRightPanelLabel(labelType: "content");
-            TextBox containerTextBox = GenerateTextBox(true);
-
             // make sure each control is in the right row (through attached properties)
-            panel.SetRow(tunLabel, 0);
-            panel.SetRow(destinationLabel, 1);
-            panel.SetRow(contentLabel, 2);
-            panel.SetRow(containerTextBox, 3);
+            //panel.SetRow(tunLabel, 0);
 
-            // add controls to panel
-            panel.Controls.AddRange(new Control[] {tunLabel, destinationLabel, contentLabel, containerTextBox});
+            // create controls and add to panel in order
+            panel.Controls.AddRange(new Control[] { 
+                GenerateRightPanelLabel("tun"), 
+                GenerateRightPanelLabel("destination"),
+                GenerateRightPanelLabel("content"),
+                GenerateTextBox(true)
+            });
 
             // set rows size
-            panel.RowStyles.Insert(0, new RowStyle(SizeType.AutoSize));
-            panel.RowStyles.Insert(1, new RowStyle(SizeType.AutoSize));
-            panel.RowStyles.Insert(2, new RowStyle(SizeType.AutoSize));
-            panel.RowStyles.Insert(3, new RowStyle(SizeType.Absolute, 200));
+            panel.RowStyles[0] = new RowStyle(SizeType.AutoSize);
+            panel.RowStyles[1] = new RowStyle(SizeType.AutoSize);
+            panel.RowStyles[2] = new RowStyle(SizeType.AutoSize);
+            panel.RowStyles[3] = new RowStyle(SizeType.Absolute, 200); // TextBox
 
             return panel;
         }
