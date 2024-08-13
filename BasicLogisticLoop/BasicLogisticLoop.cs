@@ -51,6 +51,12 @@ namespace BasicLogisticLoop
             // Form settings
             Text = "Logisticloop Basic";
             BackColor = WindowBackColor;
+            Name = "BasicLogisticLoop";
+            AutoSize = false;
+            Size = new Size(1600, 900);
+            StartPosition = FormStartPosition.CenterScreen;
+            MaximizeBox = false;
+            ShowIcon = false;
 
             // generate form controls here
             Controls.Add(GenerateSplitContainer());
