@@ -146,20 +146,32 @@ namespace BasicLogisticLoop
         /// <summary>
         /// Display the content of a given node label in the GUIs sidebar
         /// </summary>
-        /// <param name="label">Label to show the content of.</param>
-        private void ShowContent(Label label)
+        /// <param name="nodeLabel">Label to show the content of.</param>
+        private void ShowContent(Label nodeLabel)
         {
-            // find the corresponding viewnode to the label
+            // search the NodeData for the corresponding ViewNode of the clicked node label
             foreach (ViewNode node in NodeData)
             {
-                if (label.Name == GetNodeLabelName(node.Type, node.NodeID)) {
-                    // Put the content into the Node Details part of the side bar
-                    //Controls.Find("")
+                // compare the node labels name with the view nodes name
+                if (nodeLabel.Name == GetNodeLabelName(node.Type, node.NodeID)) {
+                    // Get the Controls of the Node Details part of the side bar
+                    Label nodeTypeLabel = Controls.Find(LabelType.GetName(LabelType.NodeType), true).First() as Label;
+                    Label nodeIDLabel = Controls.Find(LabelType.GetName(LabelType.NodeID), true).First() as Label;
+                    Label tunLabel = Controls.Find(LabelType.GetName(LabelType.TUN), true).First() as Label;
+                    Label destinationLabel = Controls.Find(LabelType.GetName(LabelType.Destination), true).First() as Label;
+                    TextBox containerTextBox = Controls.Find("containerTextBox", true).First() as TextBox;
+
+                    // Put the content of the  into the Controls
+                    nodeTypeLabel.Text = LabelType.GetText(LabelType.NodeType) + NodeTypeToString(node.Type);
+                    nodeIDLabel.Text = LabelType.GetText(LabelType.NodeID) + node.NodeID.ToString();
+                    tunLabel.Text = LabelType.GetText(LabelType.TUN) + node.Container.TransportUnitNumber.ToString();
+                    destinationLabel.Text = LabelType.GetText(LabelType.Destination) + NodeTypeToString(node.Container.DestinationType);
+                    containerTextBox.Text = node.Container.Content;
+
+                    // If label not found program should crash (wrong logic), so no error handling here
                     return;
                 }
             }
-
-            throw new NotImplementedException();
         }
 
         /// <summary>

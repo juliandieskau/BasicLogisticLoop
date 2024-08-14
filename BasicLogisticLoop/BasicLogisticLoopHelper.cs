@@ -448,7 +448,7 @@ namespace BasicLogisticLoop
             // create label
             Label label = new Label
             {
-                Name = labelType + "Label",
+                Name = LabelType.GetName(labelType),
                 Text = text,
                 TextAlign = ContentAlignment.MiddleLeft,
                 Font = new Font(new FontFamily("Arial"), 16, fontStyle, GraphicsUnit.Pixel),
@@ -631,6 +631,9 @@ namespace BasicLogisticLoop
         // #################################################
         // Types
 
+        /// <summary>
+        /// Class to use to access right panel labels by their name and to get their text.
+        /// </summary>
         private class LabelType
         {
             public const string Retrieval = "retrieval";
@@ -689,6 +692,16 @@ namespace BasicLogisticLoop
                     return "Content: ";
                 }
                 return "";
+            }
+
+            /// <summary>
+            /// Returns the name of the label of the given type.
+            /// </summary>
+            /// <param name="labelType">One of the LabelType strings.</param>
+            /// <returns>Text to use as name of label.</returns>
+            public static string GetName(string labelType)
+            {
+                return labelType + "Label";
             }
         }
 
