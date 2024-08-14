@@ -13,3 +13,6 @@
 	- Wegen Erweiterbarkeit, sobald man ein leicht anderes Modell hat muss man den Designer dafür verwenden aber kann immer nur ein Modell halten
 	- Namenskonventionen sind übersichtlicher, Zugriff auf bestimmte Teile des View kann über Methoden und Konstanten bestimmt werden
 	- Man hätte nur Modell dynamisch erzeugen können und den Rest außenrum zu Design-Zeit, aber ich habe es gerne einheitlich
+- Für Modell nur ein Lager und eine Auslagerstation, daher im View keine Darstellungsmöglichkeit für mehr als eins (Aufwand)
+	Model hat dennoch die Modellierung, mehrere dieser Nodes zu haben, falls das in einem Fall gebraucht werden würde
+	Dann muss aber der View angepasst werden.

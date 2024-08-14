@@ -61,7 +61,7 @@ namespace BasicLogisticLoop.Presenter
             {
                 try
                 {
-                    message = Model.RetrieveContainer(nodeID: retrieval.NodeID, container: retrieval.RetrievedContainer);
+                    message = Model.RetrieveContainer(nodeID: retrieval.NodeID, content: retrieval.Content);
                 }
                 catch (ArgumentException ex)
                 {

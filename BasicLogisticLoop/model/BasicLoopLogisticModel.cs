@@ -122,10 +122,10 @@ namespace BasicLogisticLoop.Model
         /// Takes a newly created container (from user input) and retrieves it (symbolically) from the warehouse onto the given retrieval node.
         /// </summary>
         /// <param name="nodeID">ID of the retrieval node to place the new container on.</param>
-        /// <param name="container">Container to place onto the retrieval node.</param>
+        /// <param name="content">Content of container to place onto the retrieval node.</param>
         /// <returns>ErrorMessage when adjacent node to commission node is occupied or empty string if successful.</returns>
         /// <exception cref="ArgumentException">When the given nodeID does not match a retrieval node.</exception>
-        public string RetrieveContainer(int nodeID, Container container)
+        public string RetrieveContainer(int nodeID, string content)
         {
             throw new ArgumentException("The given nodeID does not match a retrieval node.");
         }

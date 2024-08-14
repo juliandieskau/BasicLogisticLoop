@@ -1,15 +1,18 @@
-﻿using BasicLogisticLoop.Presenter;
+﻿using BasicLogisticLoop.Model;
+using BasicLogisticLoop.Presenter;
+using BasicLogisticLoop.Presenter.Input;
 using BasicLogisticLoop.Presenter.Output;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.ConstrainedExecution;
 using System.Runtime.Remoting.Channels;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace BasicLogisticLoop
 {
@@ -122,13 +125,48 @@ namespace BasicLogisticLoop
         /// <summary>
         /// Method as Event handler to be added to all Buttons that calls the Presenter by building a fitting IInput object.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">Clicked Button.</param>
+        /// <param name="e">Event Arguments.</param>
         private void OnButtonClick(object sender, EventArgs e)
         {
+            // Step Button, Commissioning Button, Retrieval Button:
+            //      let presenter update model with input (update model in view is called from presenter)
+            // Retrieval:
+            //      Clear TextBox (or fill new random text)
             Button button = sender as Button;
-            // Step Button, Commissioning Button, Retrieval Button: let presenter update model with input (update model in view is called from presenter)
-            // Retrieval: Clear TextBox (or fill new random text)
+            string errorMessage = "";
+            if (button.Name == "stepButton")
+            {
+                // let presenter update model with input (update model in view is called from presenter)
+                IInput input = new StepInput();
+                errorMessage = Presenter.ReceiveInput(input);
+            }
+            else if (button.Name == "commissionButton")
+            {
+                // search ViewNodes for (first) Commission-Node and get its NodeID
+                // For more than one commission node change here to get specific labels ID instead
+                // and at the commissionButton to specify which node to commission
+                int nodeID = NodeData.Find(node => node.Type == NodeType.Commissioning).NodeID;
+
+                // let presenter update model with input (update model in view is called from presenter)
+                IInput input = new CommissionInput(nodeID);
+                errorMessage = Presenter.ReceiveInput(input);
+            }
+            else if (button.Name == "retrievalButton")
+            {
+                // Get the input data to give the model, no error checking since errors here should crash the program (wrong logic)
+                int nodeID = NodeData.Find(node => node.Type == NodeType.Retrieval).NodeID;
+                TextBox retrievalTextBox = Controls.Find("retrievalTextBox", true).First() as TextBox;
+                String content = retrievalTextBox.Text;
+
+                // let presenter update model with input (update model in view is called from presenter)
+                IInput input = new RetrievalInput(nodeID, content);
+                errorMessage = Presenter.ReceiveInput(input);
+
+                // Fill TextBox with new random items to be used if user is lazy
+                retrievalTextBox.Text = GetRandomContainerContent();
+            }
+            
             throw new NotImplementedException();
         }
 
