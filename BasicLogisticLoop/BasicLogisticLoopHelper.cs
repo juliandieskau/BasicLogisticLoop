@@ -403,7 +403,7 @@ namespace BasicLogisticLoop
         /// <summary>
         /// Generates a label for the right panel of the view. Outputs labels with attributes depending on the given labelType.
         /// </summary>
-        /// <param name="labelType">retrieval, nodeDetails, container, description, nodeType, nodeID, tun, destination, content</param>
+        /// <param name="labelType">LabelType constant string</param>
         /// <returns>Label with corresponding attributes.</returns>
         private Label GenerateRightPanelLabel(string labelType) 
         {
@@ -412,40 +412,36 @@ namespace BasicLogisticLoop
             FontStyle fontStyle = FontStyle.Regular;
             string text = "";
 
+            text = LabelType.GetText(labelType);
             // special values depending on label
             switch (labelType)
             {
-                case "retrieval":
-                    text = "Retrieval";
+                case LabelType.Retrieval:
                     border = BorderStyle.FixedSingle;
                     fontStyle = FontStyle.Bold;
                     break;
-                case "nodeDetails":
-                    text = "Node Details";
+                case LabelType.NodeDetails:
                     border = BorderStyle.FixedSingle;
                     fontStyle = FontStyle.Bold;
                     break;
-                case "container":
-                    text = "Container:";
+                case LabelType.Container:
                     fontStyle = FontStyle.Bold; 
                     break;
-                case "description":
-                    text = "Input content of next from" + Environment.NewLine + "warehouse retrieved container:";
+                case LabelType.Description:
                     break;
-                case "nodeType":
-                    text = "Node Type: <select node>";
+                case LabelType.NodeType:
+                    text += "<select node>";
                     break;
-                case "nodeID":
-                    text = "Node ID: <select node>";
+                case LabelType.NodeID:
+                    text += "<select node>";
                     break;
-                case "tun":
-                    text = "TransportUnitNumber: <select node>";
+                case LabelType.TUN:
+                    text += "<select node>";
                     break;
-                case "destination":
-                    text = "Destination: <select node>";
+                case LabelType.Destination:
+                    text += "<select node>";
                     break;
-                case "content":
-                    text = "Content:";
+                case LabelType.Content:
                     break;
             }
 
@@ -630,6 +626,70 @@ namespace BasicLogisticLoop
                 content += words[random.Next(words.Length)] + Environment.NewLine;
             }
             return content += words[random.Next(words.Length)];
+        }
+
+        // #################################################
+        // Types
+
+        private class LabelType
+        {
+            public const string Retrieval = "retrieval";
+            public const string NodeDetails = "nodeDetails";
+            public const string Container = "container";
+            public const string Description = "description";
+            public const string NodeType = "nodeType";
+            public const string NodeID = "nodeID";
+            public const string TUN = "tun";
+            public const string Destination = "destination";
+            public const string Content = "content";
+
+            /// <summary>
+            /// Returns the text to display for a Label of the given type.
+            /// </summary>
+            /// <param name="labelType">One of the LabelType strings.</param>
+            /// <returns>Text to display in label.</returns>
+            public static string GetText(string labelType)
+            {
+                if (labelType == Retrieval)
+                {
+                    return "Retrieval";
+                }
+                if (labelType == NodeDetails)
+                {
+                    return "Node Details";
+                }
+                if (labelType == Container)
+                {
+                    return "Container: ";
+                }
+                if (labelType == Description)
+                {
+                    return "Input content of next from" +
+                            Environment.NewLine +
+                            "warehouse retrieved container:";
+                }
+                if (labelType == NodeType)
+                {
+                    return "Node Type: ";
+                }
+                if (labelType == NodeID)
+                {
+                    return "Node ID: ";
+                }
+                if (labelType == TUN)
+                {
+                    return "TransportUnitNumber: ";
+                }
+                if (labelType == Destination)
+                {
+                    return "Destination: ";
+                }
+                if (labelType == Content)
+                {
+                    return "Content: ";
+                }
+                return "";
+            }
         }
 
         // #################################################

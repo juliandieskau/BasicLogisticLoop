@@ -150,6 +150,14 @@ namespace BasicLogisticLoop
         private void ShowContent(Label label)
         {
             // find the corresponding viewnode to the label
+            foreach (ViewNode node in NodeData)
+            {
+                if (label.Name == GetNodeLabelName(node.Type, node.NodeID)) {
+                    // Put the content into the Node Details part of the side bar
+                    //Controls.Find("")
+                    return;
+                }
+            }
 
             throw new NotImplementedException();
         }
