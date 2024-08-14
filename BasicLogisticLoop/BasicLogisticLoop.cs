@@ -167,7 +167,11 @@ namespace BasicLogisticLoop
                 retrievalTextBox.Text = GetRandomContainerContent();
             }
             
-            throw new NotImplementedException();
+            // Output error message if receiving input failed
+            if (errorMessage != "")
+            {
+                ShowErrorMessage(errorMessage);
+            }
         }
 
         /// <summary>
