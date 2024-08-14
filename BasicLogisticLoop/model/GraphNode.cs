@@ -14,7 +14,7 @@ namespace BasicLogisticLoop.Model
     internal class GraphNode
     {
         /// <summary>
-        /// The type of the ViewNode.
+        /// The type of the Node.
         /// </summary>
         public NodeType Type { get; private set; }
 

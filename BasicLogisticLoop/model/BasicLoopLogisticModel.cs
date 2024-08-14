@@ -2,8 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace BasicLogisticLoop.Model
 {
@@ -137,7 +140,60 @@ namespace BasicLogisticLoop.Model
         /// <exception cref="ArgumentException">When the given nodeID does not match a storage node.</exception>
         private void StoreContainer(int nodeID)
         {
-            throw new ArgumentException();
+            // Check if node is storage node
+            GraphNode node = GetGraphNode(nodeID);
+            if (node == null || node.Type != NodeType.Storage)
+            {
+                throw new ArgumentException("The given nodeID does not match a storage node.");
+            }
+            // If the model would need this, save Container into a database here
+
+            // 
+
+        }
+
+        /// <summary>
+        /// Moves a container from one given node to another given node.
+        /// Checks if move is valid. Only able to move container onto empty nodes!
+        /// </summary>
+        /// <param name="fromID">node to move the container from.</param>
+        /// <param name="toID">node to move the container to.</param>
+        /// <exception cref="ArgumentException">When the given IDs do not match nodes in the graph or the move is not valid in the model.</exception>
+        private void MoveContainer(GraphNode fromNode, GraphNode toNode)
+        {
+            // Check if the nodes are valid
+            if (fromNode == null | toNode == null)
+            {
+                throw new ArgumentException("The given nodes are null.");
+            }
+            // Check if toNode is empty
+            if (!toNode.IsEmpty())
+            {
+                throw new ArgumentException("The Node to move the container to is already occupied!");
+            }
+
+            // check valid nodes to move to or from
+            // valid type pairs:
+            //  Retrieval       (AB)    -> Conveyor         (Loop)
+            //  Conveyor        (Loop)  -> Conveyor         (Loop)
+            //  Conveyor        (Loop)  -> Commissioning    (K)
+            //  Conveyor        (Loop)  -> Storage          (EB)
+            // explicitly not valid:
+            //  Storage         (EB)                -> Warehouse    (nicht im System)   [StoreContainer()]
+            //  Commissioning   (K)                 -> Conveyor     (Loop)              [CommissionContainer()]
+            //  Warehouse       (nicht im System)   -> Retrieval    (AB)                [RetrieveContainer()]
+
+            if (    (   (fromNode.Type == NodeType.Retrieval)  && (toNode.Type == NodeType.Conveyor)       )|
+                    (   (fromNode.Type == NodeType.Conveyor)   && (toNode.Type == NodeType.Conveyor)       )|
+                    (   (fromNode.Type == NodeType.Conveyor)   && (toNode.Type == NodeType.Commissioning)  )|
+                    (   (fromNode.Type == NodeType.Conveyor)   && (toNode.Type == NodeType.Storage)        ))
+            {
+                toNode.ChangeContainer(fromNode.GetContainer());
+            }
+            else
+            {
+                throw new ArgumentException("The move between the two nodes is invalid.");
+            }
         }
 
         /// <summary>
