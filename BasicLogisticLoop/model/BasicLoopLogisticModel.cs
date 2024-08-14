@@ -136,20 +136,19 @@ namespace BasicLogisticLoop.Model
         /// <summary>
         /// Stores the container on given node into the warehouse, if the node is a storage node.
         /// </summary>
-        /// <param name="nodeID">ID of the storage node to take the container of.</param>
+        /// <param name="node">Storage node to take the container of.</param>
         /// <exception cref="ArgumentException">When the given nodeID does not match a storage node.</exception>
-        private void StoreContainer(int nodeID)
+        private void StoreContainer(GraphNode node)
         {
             // Check if node is storage node
-            GraphNode node = GetGraphNode(nodeID);
             if (node == null || node.Type != NodeType.Storage)
             {
                 throw new ArgumentException("The given nodeID does not match a storage node.");
             }
-            // If the model would need this, save Container into a database here
+            // If the model would need this, save Container into a database ("warehouse") here
 
-            // 
-
+            // Empty the storage node
+            node.ChangeContainer(null);
         }
 
         /// <summary>
