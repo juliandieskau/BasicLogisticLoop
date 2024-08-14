@@ -104,13 +104,19 @@ namespace BasicLogisticLoop
         /// Method as Event handler to be added to all Labels that calls the ShowContent() Method when a Label is clicked.
         /// </summary>
         /// <param name="sender">Label that was clicked.</param>
-        /// <param name="e"></param>
+        /// <param name="e">Event Arguments.</param>
         private void OnLabelClick(object sender, EventArgs e)
         {
             Label label = sender as Label;
-            // For all Node Labels: 
-            //      When clicked display its content in label on the side (ShowContent)
-            throw new NotImplementedException();
+            // For Node Labels: 
+            //      When clicked display its content in label on the right side panel
+            if (label.Name.Contains(NodeTypeToString(NodeType.Conveyor))        |
+                label.Name.Contains(NodeTypeToString(NodeType.Retrieval))       |
+                label.Name.Contains(NodeTypeToString(NodeType.Commissioning))   |
+                label.Name.Contains(NodeTypeToString(NodeType.Storage))         |
+                label.Name.Contains(NodeTypeToString(NodeType.Warehouse))) {
+                ShowContent(label);
+            }
         }
 
         /// <summary>
@@ -143,6 +149,7 @@ namespace BasicLogisticLoop
         /// <param name="label">Label to show the content of.</param>
         private void ShowContent(Label label)
         {
+            // find the corresponding viewnode to the label
 
             throw new NotImplementedException();
         }
