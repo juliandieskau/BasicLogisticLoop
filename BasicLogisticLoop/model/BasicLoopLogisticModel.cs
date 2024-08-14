@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar;
 
 namespace BasicLogisticLoop.Model
 {
@@ -126,11 +127,35 @@ namespace BasicLogisticLoop.Model
         /// <exception cref="ArgumentException">When the given nodeID does not match a commission node.</exception>
         public string CommissionContainer(GraphNode node)
         {
+            // Check if node is commission node
             if (node == null || node.Type != NodeType.Commissioning)
             {
                 throw new ArgumentException("The given node does not match a commission node.");
             }
-            
+
+            // Get node to move container to, if all are not empty returns null
+            GraphNode followingNode = GraphNodes.Find(graphNode => 
+                                                        Graph.GetAdjacentNodes(node.NodeID)
+                                                        .Contains<int>(graphNode.NodeID) 
+                                                        && !graphNode.IsEmpty());
+            if (followingNode == null)
+            {
+                return ErrorMessages.CommissionError;
+            }
+
+            // Commission container: Give destinationType: Storage (even if was already commissioned but not moved to loop)
+            node.GetContainer().DestinationType = NodeType.Storage;
+
+            // Move container from the commission node back into the loop
+            try
+            {
+                MoveContainer(node, followingNode);
+            }
+            catch (ArgumentException e)
+            {
+                return ErrorMessages.CommissionError + " " + e.Message;
+            }
+            return "";
         }
 
         /// <summary>
@@ -205,15 +230,16 @@ namespace BasicLogisticLoop.Model
             //  Conveyor        (Loop)  -> Conveyor         (Loop)
             //  Conveyor        (Loop)  -> Commissioning    (K)
             //  Conveyor        (Loop)  -> Storage          (EB)
+            //  Commissioning   (K)     -> Conveyor         (Loop)                      [CommissionContainer()]
             // explicitly not valid:
             //  Storage         (EB)                -> Warehouse    (nicht im System)   [StoreContainer()]
-            //  Commissioning   (K)                 -> Conveyor     (Loop)              [CommissionContainer()]
             //  Warehouse       (nicht im System)   -> Retrieval    (AB)                [RetrieveContainer()]
 
-            if (    (   (fromNode.Type == NodeType.Retrieval)  && (toNode.Type == NodeType.Conveyor)       )|
-                    (   (fromNode.Type == NodeType.Conveyor)   && (toNode.Type == NodeType.Conveyor)       )|
-                    (   (fromNode.Type == NodeType.Conveyor)   && (toNode.Type == NodeType.Commissioning)  )|
-                    (   (fromNode.Type == NodeType.Conveyor)   && (toNode.Type == NodeType.Storage)        ))
+            if (    (   (fromNode.Type == NodeType.Retrieval)       && (toNode.Type == NodeType.Conveyor)       )|
+                    (   (fromNode.Type == NodeType.Conveyor)        && (toNode.Type == NodeType.Conveyor)       )|
+                    (   (fromNode.Type == NodeType.Conveyor)        && (toNode.Type == NodeType.Commissioning)  )|
+                    (   (fromNode.Type == NodeType.Conveyor)        && (toNode.Type == NodeType.Storage)        )|
+                    (   (fromNode.Type == NodeType.Commissioning)   && (toNode.Type == NodeType.Conveyor)       ))
             {
                 toNode.ChangeContainer(fromNode.GetContainer());
             }
