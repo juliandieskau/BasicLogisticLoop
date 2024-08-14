@@ -33,8 +33,16 @@ namespace BasicLogisticLoop.Model
         /// </summary>
         private List<ViewNode> WarehouseNodes;
 
-        // Values to use for constructing the model
+        // Values to use for the model
+        /// <summary>
+        /// Number of Nodes in the graph (excluding warehouse nodes, which are only present for the view).
+        /// </summary>
         int GraphNodeNumber = 15;
+
+        /// <summary>
+        /// Index to save the last used TransportUnit-Number and increase by 1 before assigning it to the next container.
+        /// </summary>
+        int currentTUN = 10000;
 
         /// <summary>
         /// Constructor that sets up all the model data the BasicLogisticsLoop needs.
@@ -113,24 +121,44 @@ namespace BasicLogisticLoop.Model
         /// Commissions a container standing on the given Commissioning-Node (symbolically), gives it the destination "Storage"
         /// and moves it back into the loop, if adjacent node is empty.
         /// </summary>
-        /// <param name="nodeID">ID of the commission node to take the container of.</param>
+        /// <param name="node">Commission node to take the container of.</param>
         /// <returns>ErrorMessage when container cannot be moved back into the loop (node occupied) or empty string if successful.</returns>
         /// <exception cref="ArgumentException">When the given nodeID does not match a commission node.</exception>
-        public string CommissionContainer(int nodeID)
+        public string CommissionContainer(GraphNode node)
         {
-            throw new ArgumentException("The given nodeID does not match a commission node.");
+            if (node == null || node.Type != NodeType.Commissioning)
+            {
+                throw new ArgumentException("The given node does not match a commission node.");
+            }
+            
         }
 
         /// <summary>
-        /// Takes a newly created container (from user input) and retrieves it (symbolically) from the warehouse onto the given retrieval node.
+        /// Takes a newly created container content (from user input) and retrieves it (symbolically) from the warehouse onto the given retrieval node - if empty.
+        /// Creates a container with the given content, a generated TransportUnit-Number and gives it the destination "Commissioning".
         /// </summary>
-        /// <param name="nodeID">ID of the retrieval node to place the new container on.</param>
+        /// <param name="node">Retrieval node to place the new container on.</param>
         /// <param name="content">Content of container to place onto the retrieval node.</param>
         /// <returns>ErrorMessage when adjacent node to commission node is occupied or empty string if successful.</returns>
         /// <exception cref="ArgumentException">When the given nodeID does not match a retrieval node.</exception>
-        public string RetrieveContainer(int nodeID, string content)
+        public string RetrieveContainer(GraphNode node, string content)
         {
-            throw new ArgumentException("The given nodeID does not match a retrieval node.");
+            // Check if node is retrieval node
+            if (node == null || node.Type != NodeType.Retrieval)
+            {
+                throw new ArgumentException("The given node does not match a retrieval node.");
+            }
+
+            // Check if node is empty
+            if (!node.IsEmpty())
+            {
+                return ErrorMessages.RetrievalError;
+            }
+
+            // Create container with input
+            Container container = new Container(transportUnitNumber: ++currentTUN, content: content, destinationType: NodeType.Commissioning);
+            node.ChangeContainer(container);
+            return "";
         }
 
         /// <summary>
