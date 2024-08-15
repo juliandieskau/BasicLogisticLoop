@@ -97,7 +97,8 @@ namespace BasicLogisticLoop.Model
         /// <returns>ErrorMessage when error occurs or empty string if successful.</returns>
         public string Step()
         {
-            // save references to all graph nodes that have not been handled yet and make sure none are handled twice in one step
+            // Save references to all graph nodes that have not been handled yet and make sure none are handled twice in one step.
+            // Handling node: Moving the container on a node if it has one.
             List<int> unhandledNodeIDs = GraphNodes.Select(n => n.NodeID).ToList();
             if (unhandledNodeIDs == null)
             {
@@ -108,53 +109,98 @@ namespace BasicLogisticLoop.Model
                 return ErrorMessages.StepError;
             }
 
-            // 1.) Storage-Nodes: Store Container into Warehouse
-            //                      to take out of cycle and clear up space.
+            // 1.) Storage-Nodes: Store Container into Warehouse to take out of cycle and clear up space.
+            // Search all storage nodes
             List<int> storageNodeIDs = unhandledNodeIDs.FindAll(x => GetGraphNode(x).Type == NodeType.Storage);
             foreach (int nodeID in storageNodeIDs)
             {
-                GraphNode node = GetGraphNode(nodeID);
-                if (node != null)
+                GraphNode storageNode = GetGraphNode(nodeID);
+                if (storageNode != null)
                 {
-                    StoreContainer(node);
+                    // Store container (to warehouse) on this node
+                    StoreContainer(storageNode);
                     
                 }
                 unhandledNodeIDs.Remove(nodeID);
             }
 
-            // 2.) Conveyor-Nodes: Move Container adjacent to Storage-Node onto it
-            //                      if it's their destination.
+            // 2.) Conveyor-Nodes: Move Container adjacent to Storage-Node onto it if it's their destination.
             foreach (int nodeID in unhandledNodeIDs)
             {
                 // Find a conveyor node
-                GraphNode node = GraphNodes.Find(x => x.NodeID == nodeID);
-                if (node != null && node.Type == NodeType.Conveyor)
+                GraphNode conveyorNode = GraphNodes.Find(x => x.NodeID == nodeID);
+                if (conveyorNode != null && conveyorNode.Type == NodeType.Conveyor)
                 {
-                    // Check if the destination of the nodes container is a storage node
-                    if (node.GetContainer() != null && node.GetContainer().DestinationType == NodeType.Storage)
+                    // Check if there's an adjacent storage node for the current node that is empty
+                    GraphNode storageNode = GetAdjacentGraphNodeOfType(conveyorNode, NodeType.Storage);
+                    if (storageNode != null && !storageNode.IsEmpty())
                     {
-                        // Check if there's an adjacent storage node for the current node
-                        GraphNode adjacentNode = GetAdjacentGraphNodeOfType(node, NodeType.Storage);
-                        if (adjacentNode != null)
+                        // Check if the destination of the nodes container is a storage node
+                        if (conveyorNode.GetContainer() != null && conveyorNode.GetContainer().DestinationType == NodeType.Storage)
                         {
                             // Move Container onto storage node
-                            MoveContainer(node, adjacentNode);
+                            MoveContainer(conveyorNode, storageNode);
+                            unhandledNodeIDs.Remove(nodeID);
                         }
                     }
                 }
             }
 
-            // 3.) Conveyor-Nodes: Move Container adjacent to Commissioning-Node onto it
-            //                      if it's their destination and it's empty.
+            // 3.) Conveyor-Nodes: Move Container adjacent to Commissioning-Node onto it if it's their destination and it's empty.
+            foreach (int nodeID in unhandledNodeIDs)
+            {
+                // Find a conveyor node
+                GraphNode conveyorNode = GraphNodes.Find(x => x.NodeID == nodeID);
+                if (conveyorNode != null && conveyorNode.Type == NodeType.Conveyor)
+                {
+                    // Check if there's an adjacent commissioning node for the current node
+                    GraphNode commissioningNode = GetAdjacentGraphNodeOfType(conveyorNode, NodeType.Commissioning);
+                    if (commissioningNode != null && !commissioningNode.IsEmpty())
+                    {
+                        // Check if the destination of the nodes container is a commissioning node
+                        if (conveyorNode.GetContainer() != null && conveyorNode.GetContainer().DestinationType == NodeType.Commissioning)
+                        {
+                            // Move Container onto commissioning node
+                            MoveContainer(conveyorNode, commissioningNode);
+                            unhandledNodeIDs.Remove(nodeID);
+                        }
+                    }
+                }
+            }
 
+            // 4.) Retrieval-Nodes: Move Container on Retrieval-Node into the loop if adjacent node is empty.
+            // Search all retrieval nodes
+            List<int> retrievalNodeIDs = unhandledNodeIDs.FindAll(x => GetGraphNode(x).Type == NodeType.Retrieval);
+            foreach (int nodeID in retrievalNodeIDs)
+            {
+                // Check if retrievalNode has a container on it (so it has to be moved)
+                GraphNode retrievalNode = GetGraphNode(nodeID);
+                if (retrievalNode != null && !retrievalNode.IsEmpty())
+                {
+                    // Get the node to move the container to and if its empty
+                    GraphNode followingNode = GetAdjacentGraphNodeOfType(retrievalNode, NodeType.Conveyor);
+                    if (followingNode != null && !followingNode.IsEmpty())
+                    {
+                        // Check if the loop will be stuck after moving container from retrieval node into it 
+                        if (IsRetrievalAllowed(followingNode))
+                        {
+                            // Move the container
+                            MoveContainer(retrievalNode, followingNode);
+                        }
+                        unhandledNodeIDs.Remove(nodeID);
+                    }
+                }
+            }
 
-            // 4.) Conveyor-Nodes: Move Containers one node forward in the conveyor loop
-            //                      if target node of step is not adjacent to occupied Retrieval-Node.
-            //                      (Loop over conveyor nodes backwards from Commissioning Node)
-
-
-            // 5.) Retrieval-Nodes: Move Container on Retrieval-Node into the loop
-            //                      if adjacent node is empty.
+            // 5.) Conveyor-Nodes: Move Containers one node forward in the conveyor loop if target node of step is not adjacent to occupied Retrieval-Node.
+            List<int> conveyorNodeIDs = GraphNodes.Select(n => n.NodeID).ToList().FindAll(x => GetGraphNode(x).Type == NodeType.Conveyor);
+            // start with a commissioning nodes adjacent conveyorNode
+            int currentNodeID = GetAdjacentGraphNodeOfType(GraphNodes.Find(x => x.Type == NodeType.Commissioning), NodeType.Conveyor).NodeID;
+            // loop backwards to the node that has the current one adjacent
+            for (int i = 0; i < conveyorNodeIDs.Count; i++)
+            {
+                // TODO
+            }
 
             // Commissioning-Nodes have their own handling to move their Container into the loop on user input.
             // Warehouse-Nodes dont have an active state so they don't need handling.
@@ -331,6 +377,47 @@ namespace BasicLogisticLoop.Model
             return GraphNodes.Find(graphNode => Graph.GetAdjacentNodes(node.NodeID)
                                                     .Contains(graphNode.NodeID)
                                                     && graphNode.IsEmpty());
+        }
+
+        /// <summary>
+        /// Checks if the loop of conveyors will get stuck in an endless loop (that cannot be resolved automatically) after moving a new container onto it.
+        /// This would occur, if the commissioning node is occupied and all conveyor nodes are occupied with containers that want to reach the commissioning node.
+        /// Then the commissioning node cannot be emptied and no other container can me moved out of or into the loop.
+        /// </summary>
+        /// <param name="nodeToBeBlocked">Node that would be blocked if the retrieval would happen.</param>
+        /// <returns><c>true</c> if retrieval is allowed, otherwise <c>false</c></returns>
+        private bool IsRetrievalAllowed(GraphNode nodeToBeBlocked)
+        {
+            foreach (GraphNode node in GraphNodes)
+            {
+                // check the conveyor nodes but ignore the one that would be occupied if the retrieval would happen
+                if (node.NodeID == nodeToBeBlocked.NodeID)
+                {
+                    continue;
+                }
+                // if there's an empty commissioning node, it can't get stuck
+                if (node.Type == NodeType.Commissioning && node.IsEmpty())
+                {
+                    return true;
+                }
+                if (node.Type == NodeType.Conveyor)
+                {
+                    // if there's another empty conveyor node, it can't get stuck
+                    if (node.IsEmpty())
+                    {
+                        return true;
+                    }
+                    // if there's a container that has a destination that's not commissioning, it will go out of the loop so it can't get stuck
+                    if (node.GetContainer().DestinationType != NodeType.Commissioning)
+                    {
+                        return true;
+                    }
+                }
+            }
+            // if none of these conditions occur, all conveyor nodes besides the one where it would go onto
+            // will be full of containers wanting to go to the commissioning node which is already full
+            // thus don't allow the retrieval
+            return false;
         }
 
         /// <summary>
