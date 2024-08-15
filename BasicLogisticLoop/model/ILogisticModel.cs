@@ -29,17 +29,17 @@ namespace BasicLogisticLoop.Model
         /// <summary>
         /// Moves container from a commissioning node back to the loop, if the adjacent node is empty.
         /// </summary>
-        /// <param name="nodeID">Commissioning node from which the container should be moved.</param>
+        /// <param name="nodeID">ID of commissioning node from which the container should be moved.</param>
         /// <param name="container">Container that should be moved.</param>
         /// <returns>ErrorMessage if adjacent node is not empty.</returns>
-        string CommissionContainer(GraphNode node);
+        string CommissionContainer(int nodeID);
 
         /// <summary>
         /// Adds given container from the blackbox warehouse to the given retrieval node - if empty - with destination commissioning.
         /// </summary>
-        /// <param name="nodeID">Retrieval node to which the container should be added.</param>
+        /// <param name="nodeID">ID of retrieval node to which the container should be added.</param>
         /// <param name="content">Content that should be added in a container.</param>
         /// <returns>ErrorMessage if retrieval node is not empty.</returns>
-        string RetrieveContainer(GraphNode node, string content);
+        string RetrieveContainer(int nodeID, string content);
     }
 }

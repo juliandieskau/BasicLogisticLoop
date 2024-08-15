@@ -103,12 +103,58 @@ namespace BasicLogisticLoop.Model
         /// <returns>ErrorMessage when error occurs or empty string if successful.</returns>
         public string Step()
         {
-            // Priorities:
-            // 1.) Storage-Nodes: Store Container into Warehouse to take out of cycle and clear up space.
-            // 2.) Conveyor-Nodes: Move Container adjacent to Storage-Node onto it if it's their destination.
-            // 3.) Conveyor-Nodes: Move Container adjacent to Commissioning-Node onto it if it's their destination and it's empty.
-            // 4.) Conveyor-Nodes: Move Containers one node forward in the conveyor loop, if target node of step is not adjacent to occupied Retrieval-Node. (Loop over conveyor nodes backwards from Commissioning Node)
-            // 5.) Retrieval-Nodes: Move Container on Retrieval-Node into the loop, if adjacent node is empty.
+            // save references to all graph nodes that have not been handled yet and make sure none are handled twice in one step
+            List<int> unhandledNodeIDs = GraphNodes.Select(n => n.NodeID).ToList();
+            if (unhandledNodeIDs == null)
+            {
+                return ErrorMessages.StepError;
+            }
+            if (!unhandledNodeIDs.Any()) // not in the same call, since error occurs when null
+            {
+                return ErrorMessages.StepError;
+            }
+
+            // 1.) Storage-Nodes: Store Container into Warehouse
+            //                      to take out of cycle and clear up space.
+            List<int> storageNodeIDs = unhandledNodeIDs.FindAll(x => GetGraphNode(x).Type == NodeType.Storage);
+            foreach (int nodeID in storageNodeIDs)
+            {
+                GraphNode node = GetGraphNode(nodeID);
+                if (node != null)
+                {
+                    StoreContainer(node);
+                    
+                }
+                unhandledNodeIDs.Remove(nodeID);
+            }
+
+            // 2.) Conveyor-Nodes: Move Container adjacent to Storage-Node onto it
+            //                      if it's their destination.
+            foreach (int nodeID in unhandledNodeIDs)
+            {
+                GraphNode node = GraphNodes.Find(x => x.NodeID == nodeID);
+                if (node != null)
+                {
+                    if (node.Type == NodeType.Conveyor)
+                    {
+                        Graph.GetAdjacentNodes(nodeID)
+                    }
+                }
+                
+            }
+
+            // 3.) Conveyor-Nodes: Move Container adjacent to Commissioning-Node onto it
+            //                      if it's their destination and it's empty.
+
+
+            // 4.) Conveyor-Nodes: Move Containers one node forward in the conveyor loop
+            //                      if target node of step is not adjacent to occupied Retrieval-Node.
+            //                      (Loop over conveyor nodes backwards from Commissioning Node)
+
+
+            // 5.) Retrieval-Nodes: Move Container on Retrieval-Node into the loop
+            //                      if adjacent node is empty.
+
             // Commissioning-Nodes have their own handling to move their Container into the loop on user input.
             // Warehouse-Nodes dont have an active state so they don't need handling.
             throw new NotImplementedException();
@@ -122,11 +168,12 @@ namespace BasicLogisticLoop.Model
         /// Commissions a container standing on the given Commissioning-Node (symbolically), gives it the destination "Storage"
         /// and moves it back into the loop, if adjacent node is empty.
         /// </summary>
-        /// <param name="node">Commission node to take the container of.</param>
+        /// <param name="nodeID">ID of commission node to take the container of.</param>
         /// <returns>ErrorMessage when container cannot be moved back into the loop (node occupied) or empty string if successful.</returns>
         /// <exception cref="ArgumentException">When the given nodeID does not match a commission node.</exception>
-        public string CommissionContainer(GraphNode node)
+        public string CommissionContainer(int nodeID)
         {
+            GraphNode node = GetGraphNode(nodeID);
             // Check if node is commission node
             if (node == null || node.Type != NodeType.Commissioning)
             {
@@ -162,12 +209,13 @@ namespace BasicLogisticLoop.Model
         /// Takes a newly created container content (from user input) and retrieves it (symbolically) from the warehouse onto the given retrieval node - if empty.
         /// Creates a container with the given content, a generated TransportUnit-Number and gives it the destination "Commissioning".
         /// </summary>
-        /// <param name="node">Retrieval node to place the new container on.</param>
+        /// <param name="nodeID">ID of retrieval node to place the new container on.</param>
         /// <param name="content">Content of container to place onto the retrieval node.</param>
         /// <returns>ErrorMessage when adjacent node to commission node is occupied or empty string if successful.</returns>
         /// <exception cref="ArgumentException">When the given nodeID does not match a retrieval node.</exception>
-        public string RetrieveContainer(GraphNode node, string content)
+        public string RetrieveContainer(int nodeID, string content)
         {
+            GraphNode node = GetGraphNode(nodeID);
             // Check if node is retrieval node
             if (node == null || node.Type != NodeType.Retrieval)
             {
