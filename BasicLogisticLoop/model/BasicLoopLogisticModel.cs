@@ -2,12 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar;
 
 namespace BasicLogisticLoop.Model
 {
@@ -132,15 +126,22 @@ namespace BasicLogisticLoop.Model
             //                      if it's their destination.
             foreach (int nodeID in unhandledNodeIDs)
             {
+                // Find a conveyor node
                 GraphNode node = GraphNodes.Find(x => x.NodeID == nodeID);
-                if (node != null)
+                if (node != null && node.Type == NodeType.Conveyor)
                 {
-                    if (node.Type == NodeType.Conveyor)
+                    // Check if the destination of the nodes container is a storage node
+                    if (node.GetContainer() != null && node.GetContainer().DestinationType == NodeType.Storage)
                     {
-                        Graph.GetAdjacentNodes(nodeID)
+                        // Check if there's an adjacent storage node for the current node
+                        GraphNode adjacentNode = GetAdjacentGraphNodeOfType(node, NodeType.Storage);
+                        if (adjacentNode != null)
+                        {
+                            // Move Container onto storage node
+                            MoveContainer(node, adjacentNode);
+                        }
                     }
                 }
-                
             }
 
             // 3.) Conveyor-Nodes: Move Container adjacent to Commissioning-Node onto it
@@ -180,11 +181,8 @@ namespace BasicLogisticLoop.Model
                 throw new ArgumentException("The given node does not match a commission node.");
             }
 
-            // Get node to move container to, if all are not empty returns null
-            GraphNode followingNode = GraphNodes.Find(graphNode => 
-                                                        Graph.GetAdjacentNodes(node.NodeID)
-                                                        .Contains<int>(graphNode.NodeID) 
-                                                        && !graphNode.IsEmpty());
+            // Get node to move container to, if all are empty returns null
+            GraphNode followingNode = GetEmptyAdjacentGraphNode(node);
             if (followingNode == null)
             {
                 return ErrorMessages.CommissionError;
@@ -307,6 +305,32 @@ namespace BasicLogisticLoop.Model
             // If no matching GraphNode is found Find() returns the default value of GraphNode
             // which is a class and thus the default is null.
             return GraphNodes.Find(node => node.NodeID == nodeID);
+        }
+
+        /// <summary>
+        /// Finds the first occurence of a node that follows the given one if it is of the given type.
+        /// </summary>
+        /// <param name="node">Node to find a specific following node of.</param>
+        /// <param name="type">Type of the following node to find.</param>
+        /// <returns>Following node of type or null.</returns>
+        private GraphNode GetAdjacentGraphNodeOfType(GraphNode node, NodeType type)
+        {
+            GraphNode followingNode = GraphNodes.Find(graphNode => Graph.GetAdjacentNodes(node.NodeID)
+                                                                    .Contains(graphNode.NodeID)
+                                                                    && graphNode.Type == type);
+            return followingNode;
+        }
+
+        /// <summary>
+        /// Finds the first occurence of a node that follows the given one if it is empty.
+        /// </summary>
+        /// <param name="node">Node to find an empty following node of.</param>
+        /// <returns>Empty following node or null.</returns>
+        private GraphNode GetEmptyAdjacentGraphNode(GraphNode node)
+        {
+            return GraphNodes.Find(graphNode => Graph.GetAdjacentNodes(node.NodeID)
+                                                    .Contains(graphNode.NodeID)
+                                                    && graphNode.IsEmpty());
         }
 
         /// <summary>
