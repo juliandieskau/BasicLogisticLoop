@@ -22,6 +22,7 @@ namespace BasicLogisticLoop.Model
         /// <param name="nodeNumber">Number of nodes the graph will consist of.</param>
         public AdjacencyMatrixGraph(int nodeNumber)
         {
+            NodeNumber = nodeNumber;
             try
             {
                 GenerateEmptyMatrix(nodeNumber);

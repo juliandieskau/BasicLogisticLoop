@@ -11,10 +11,7 @@ namespace BasicLogisticLoop.Model
     /// </summary>
     internal abstract class IGraph
     {
-        /// <summary>
-        /// Number of Nodes in the Graph.
-        /// </summary>
-        protected readonly int NodeNumber;
+        protected int NodeNumber { get; set; }
 
         /// <summary>
         /// Adds a directional edge with weight 1 to the graph by connecting two nodes.

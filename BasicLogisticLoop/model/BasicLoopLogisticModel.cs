@@ -32,12 +32,12 @@ namespace BasicLogisticLoop.Model
         /// <summary>
         /// Number of Nodes in the graph (excluding warehouse nodes, which are only present for the view).
         /// </summary>
-        int GraphNodeNumber = 15;
+        private int GraphNodeNumber = 15;
 
         /// <summary>
         /// Index to save the last used TransportUnit-Number and increase by 1 before assigning it to the next container.
         /// </summary>
-        int currentTUN = 10000;
+        private int currentTUN = 10000;
 
         /// <summary>
         /// Constructor that sets up all the model data the BasicLogisticsLoop needs.
@@ -219,6 +219,9 @@ namespace BasicLogisticLoop.Model
             {
                 currentNode.ChangeContainer(firstContainer);
             }
+
+            // return successful completion of method
+            return "";
         }
 
         // To show step by step how one step of a cycle is performed: (TODO if wanted)
