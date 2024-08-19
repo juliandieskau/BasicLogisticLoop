@@ -204,12 +204,24 @@ namespace BasicLogisticLoop
                     Label destinationLabel = Controls.Find(LabelType.GetName(LabelType.Destination), true).First() as Label;
                     TextBox containerTextBox = Controls.Find("containerTextBox", true).First() as TextBox;
 
+                    // check if node has container
+                    string tunText = LabelType.GetText(LabelType.TUN);
+                    string destinationText = LabelType.GetText(LabelType.Destination);
+                    string containerText = "<empty>";
+                    tunText = node.Container == null 
+                        ? tunText + "<empty>" 
+                        : tunText + node.Container.TransportUnitNumber.ToString();
+                    destinationText = node.Container == null
+                        ? destinationText + "<empty>"
+                        : destinationText + NodeTypeToString(node.Container.DestinationType);
+                    if (node.Container != null) { containerText = node.Container.Content; }
+
                     // Put the content of the  into the Controls
                     nodeTypeLabel.Text = LabelType.GetText(LabelType.NodeType) + NodeTypeToString(node.Type);
                     nodeIDLabel.Text = LabelType.GetText(LabelType.NodeID) + node.NodeID.ToString();
-                    tunLabel.Text = LabelType.GetText(LabelType.TUN) + node.Container.TransportUnitNumber.ToString();
-                    destinationLabel.Text = LabelType.GetText(LabelType.Destination) + NodeTypeToString(node.Container.DestinationType);
-                    containerTextBox.Text = node.Container.Content;
+                    tunLabel.Text = tunText;
+                    destinationLabel.Text = destinationText;
+                    containerTextBox.Text = containerText;
 
                     // If label not found program should crash (wrong logic), so no error handling here
                     return;

@@ -277,22 +277,23 @@ namespace BasicLogisticLoop
                 AutoSize = true,
                 Dock = DockStyle.Bottom,
                 ColumnCount = 1,
-                RowCount = 9,
+                RowCount = 9
             };
 
-            // create and add controls in backwards order (DockStyle.Bottom -> first is at the bottom and then stack on top)
+            // create and add controls
             panel.Controls.AddRange(new Control[]
             {
-                GenerateContainerPanel(),
-                GenerateRightPanelLabel("container"),
-                GenerateRightPanelLabel("nodeID"),
-                GenerateRightPanelLabel("nodeType"),
-                GenerateRightPanelLabel("nodeDetails"),
-                GenerateButton("retrieval"),
-                GenerateTextBox(false),
+                GenerateRightPanelLabel("retrieval"),
                 GenerateRightPanelLabel("description"),
-                GenerateRightPanelLabel("retrieval")
+                GenerateTextBox(false),
+                GenerateButton("retrieval"),
+                GenerateRightPanelLabel("nodeDetails"),
+                GenerateRightPanelLabel("nodeType"),
+                GenerateRightPanelLabel("nodeID"),
+                GenerateRightPanelLabel("container"),
+                GenerateContainerPanel()
             });
+
 
             // set rows size
             for (int index = 0; index < 9; index++)
@@ -342,7 +343,6 @@ namespace BasicLogisticLoop
             panel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             panel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             panel.RowStyles.Add(new RowStyle(SizeType.Absolute, 200)); // TextBox
-            
 
             return panel;
         }
@@ -474,7 +474,9 @@ namespace BasicLogisticLoop
                 Font = new Font(new FontFamily("Arial"), 16, fontStyle, GraphicsUnit.Pixel),
                 AutoSize = true,
                 Dock = DockStyle.Fill,
-                BorderStyle = border
+                BorderStyle = border,
+                Margin = new Padding(3),
+                Padding = new Padding(5)
             };
 
             return label;
@@ -542,9 +544,11 @@ namespace BasicLogisticLoop
                 ReadOnly = readOnly,
                 MaxLength = 400,
                 Multiline = true,
+                BorderStyle = BorderStyle.Fixed3D,
                 Text = exampleText,
                 Font = new Font(new FontFamily("Arial"), 16, FontStyle.Regular, GraphicsUnit.Pixel),
-                Dock = DockStyle.Fill
+                Dock = DockStyle.Fill,
+                Margin = new Padding(3)
             };
 
             textBox.DoubleClick += new EventHandler(OnTextBoxDoubleClick);
