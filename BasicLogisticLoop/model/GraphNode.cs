@@ -64,14 +64,9 @@ namespace BasicLogisticLoop.Model
         /// <summary>
         /// Getter for container on node. Always make sure to check if IsEmpty() is false first before calling GetContainer()!
         /// </summary>
-        /// <returns>Container on node.</returns>
-        /// <exception cref="InvalidOperationException">When Container is null.</exception>
+        /// <returns>Container on node or null.</returns>
         public Container GetContainer() {
-            if (!this.IsEmpty())
-            {
-                return Container; 
-            }
-            throw new InvalidOperationException("Container is null. Always Check IsEmpty() first before trying to acess!");
+            return Container;
         }
 
         /// <summary>

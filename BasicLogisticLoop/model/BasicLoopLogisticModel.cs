@@ -194,17 +194,31 @@ namespace BasicLogisticLoop.Model
 
             // 5.) Conveyor-Nodes: Move Containers one node forward in the conveyor loop if target node of step is not adjacent to occupied Retrieval-Node.
             List<int> conveyorNodeIDs = GraphNodes.Select(n => n.NodeID).ToList().FindAll(x => GetGraphNode(x).Type == NodeType.Conveyor);
-            // start with a commissioning nodes adjacent conveyorNode
-            int currentNodeID = GetAdjacentGraphNodeOfType(GraphNodes.Find(x => x.Type == NodeType.Commissioning), NodeType.Conveyor).NodeID;
-            // loop backwards to the node that has the current one adjacent
-            for (int i = 0; i < conveyorNodeIDs.Count; i++)
-            {
-                // TODO
-            }
 
-            // Commissioning-Nodes have their own handling to move their Container into the loop on user input.
-            // Warehouse-Nodes dont have an active state so they don't need handling.
-            throw new NotImplementedException();
+            // start with a commissioning nodes adjacent conveyorNode and save the container on the first node to give to the last
+            GraphNode currentNode = GetAdjacentGraphNodeOfType(GraphNodes.Find(x => x.Type == NodeType.Commissioning), NodeType.Conveyor);
+            GraphNode firstNode = currentNode;
+            Container firstContainer = GetGraphNode(currentNode.NodeID).GetContainer();
+
+            // loop backwards over conveyor nodes
+            for (int i = 0; i < conveyorNodeIDs.Count - 1; i++)
+            {
+                // get node before current
+                GraphNode targetNode = currentNode;
+                currentNode = GraphNodes.Find(n => Graph.GetAdjacentNodes(n.NodeID).Contains(targetNode.NodeID));
+
+                // if node not handled before move the container from it onto the target (or the empty position "moves")
+                if (!unhandledNodeIDs.Contains(currentNode.NodeID))
+                {
+                    targetNode.ChangeContainer(currentNode.GetContainer());
+                    unhandledNodeIDs.Remove(currentNode.NodeID);
+                }
+            }
+            // assign the last node the container of the first node to connect the loop (if first node wasnt handled yet)
+            if (!unhandledNodeIDs.Contains(firstNode.NodeID))
+            {
+                currentNode.ChangeContainer(firstContainer);
+            }
         }
 
         // To show step by step how one step of a cycle is performed: (TODO if wanted)
