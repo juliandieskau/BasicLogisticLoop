@@ -72,8 +72,10 @@ namespace BasicLogisticLoop
             panel.Controls.Add(GenerateButtonsPanel());
 
             // set rows size
-            panel.RowStyles[0] = new RowStyle(SizeType.Percent, 6.0f);
-            panel.RowStyles[1] = new RowStyle(SizeType.Percent, 6.0f);
+            //panel.RowStyles[0] = new RowStyle(SizeType.Percent, 6.0f);
+            //panel.RowStyles[1] = new RowStyle(SizeType.Percent, 6.0f);
+            panel.RowStyles.Add(new RowStyle(SizeType.Percent, 6.0f));
+            panel.RowStyles.Add(new RowStyle(SizeType.Percent, 6.0f));
 
             return panel;
         }
@@ -110,8 +112,8 @@ namespace BasicLogisticLoop
             }
 
             // Transform into size of view, where between every coordinate of the model a coordinate for arrows gets inserted
-            (int x, int y) modelSize = (Math.Abs(maxModelCords.x - minModelCords.x),
-                                       Math.Abs(maxModelCords.y - minModelCords.y));
+            (int x, int y) modelSize = (Math.Abs(maxModelCords.x - minModelCords.x) + 1,
+                                       Math.Abs(maxModelCords.y - minModelCords.y) + 1);
             (int x, int y) viewSize = ((modelSize.x * 2) - 1, (modelSize.y * 2) - 1);
 
             // Generate panel with columns and rows with size
@@ -141,12 +143,14 @@ namespace BasicLogisticLoop
                 if (x % 2 == 0)
                 {
                     // Node Labels
-                    panel.ColumnStyles[x] = new ColumnStyle(SizeType.Percent, nodeSizeXPercent);
+                    //panel.ColumnStyles[x] = new ColumnStyle(SizeType.Percent, nodeSizeXPercent);
+                    panel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, nodeSizeXPercent));
                 } 
                 else
                 {
                     // Arrow Labels
-                    panel.ColumnStyles[x] = new ColumnStyle(SizeType.Percent, arrowSizeXPercent);
+                    //panel.ColumnStyles[x] = new ColumnStyle(SizeType.Percent, arrowSizeXPercent);
+                    panel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, arrowSizeXPercent));
                 }
             }
             for (int y = 0; y < viewSize.y; y++)
@@ -155,12 +159,14 @@ namespace BasicLogisticLoop
                 if (y % 2 == 0)
                 {
                     // Node Labels
-                    panel.RowStyles[y] = new RowStyle(SizeType.Percent, nodeSizeYPercent);
+                    //panel.RowStyles[y] = new RowStyle(SizeType.Percent, nodeSizeYPercent);
+                    panel.RowStyles.Add(new RowStyle(SizeType.Percent, nodeSizeXPercent));
                 }
                 else
                 {
                     // Arrow Labels
-                    panel.RowStyles[y] = new RowStyle(SizeType.Percent, arrowSizeYPercent);
+                    //panel.RowStyles[y] = new RowStyle(SizeType.Percent, arrowSizeYPercent);
+                    panel.RowStyles.Add(new RowStyle(SizeType.Percent, arrowSizeYPercent));
                 }
             }
 
@@ -293,11 +299,13 @@ namespace BasicLogisticLoop
             {
                 if (index == 2)
                 {
-                    panel.RowStyles[index] = new RowStyle(SizeType.Absolute, 200); // TextBox
+                    //panel.RowStyles[index] = new RowStyle(SizeType.Absolute, 200); // TextBox
+                    panel.RowStyles.Add(new RowStyle(SizeType.Absolute, 200));
                 }
                 else
                 {
-                    panel.RowStyles[index] = new RowStyle(SizeType.AutoSize);
+                    //panel.RowStyles[index] = new RowStyle(SizeType.AutoSize);
+                    panel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
                 }
             }
 
@@ -330,10 +338,11 @@ namespace BasicLogisticLoop
             });
 
             // set rows size
-            panel.RowStyles[0] = new RowStyle(SizeType.AutoSize);
-            panel.RowStyles[1] = new RowStyle(SizeType.AutoSize);
-            panel.RowStyles[2] = new RowStyle(SizeType.AutoSize);
-            panel.RowStyles[3] = new RowStyle(SizeType.Absolute, 200); // TextBox
+            panel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            panel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            panel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            panel.RowStyles.Add(new RowStyle(SizeType.Absolute, 200)); // TextBox
+            
 
             return panel;
         }
