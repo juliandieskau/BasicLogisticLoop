@@ -57,7 +57,7 @@ namespace BasicLogisticLoop
             Name = "BasicLogisticLoop";
             AutoSize = false;
             Size = new Size(1600, 900);
-            ClientSize = new Size(1600, 900);
+            ClientSize = Size;
             StartPosition = FormStartPosition.CenterScreen;
             MaximizeBox = false;
             ShowIcon = false;
@@ -84,6 +84,12 @@ namespace BasicLogisticLoop
 
                 // Update the corresponding label in the view with the new node
                 UpdateNode(changedNode);
+
+                // Update NodeDetails if changedNode is currently displayed
+                if (NodeShown != null)
+                {
+                    ShowContent(NodeShown);
+                }
             }
         }
 
@@ -120,6 +126,7 @@ namespace BasicLogisticLoop
                 label.Name.Contains(NodeTypeToString(NodeType.Commissioning))   |
                 label.Name.Contains(NodeTypeToString(NodeType.Storage))         |
                 label.Name.Contains(NodeTypeToString(NodeType.Warehouse))) {
+                NodeShown = label;
                 ShowContent(label);
             }
         }

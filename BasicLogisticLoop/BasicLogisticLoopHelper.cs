@@ -20,7 +20,8 @@ namespace BasicLogisticLoop
 
         // VARIABLES
 
-        private (int x, int y) minModelCords, maxModelCords;
+        private (int x, int y) MinModelCords, MaxModelCords;
+        private Label NodeShown = null;
 
         // #################################################
         // PANEL GENERATOR METHODS
@@ -86,32 +87,32 @@ namespace BasicLogisticLoop
         private TableLayoutPanel GenerateModelPanel()
         {
             // Get size of model (min and max coordinate(x, y) values of viewnodes)
-            minModelCords = (Int32.MaxValue, Int32.MaxValue);
-            maxModelCords = (Int32.MinValue, Int32.MinValue);
+            MinModelCords = (Int32.MaxValue, Int32.MaxValue);
+            MaxModelCords = (Int32.MinValue, Int32.MinValue);
             foreach (ViewNode node in NodeData)
             {
                 // if any coordinate in the model is outside of the current bounds, widen the bounds
-                if (node.Coordinates.X < minModelCords.x)
+                if (node.Coordinates.X < MinModelCords.x)
                 {
-                    minModelCords.x = node.Coordinates.X;
+                    MinModelCords.x = node.Coordinates.X;
                 }
-                if (node.Coordinates.Y < minModelCords.y)
+                if (node.Coordinates.Y < MinModelCords.y)
                 {
-                    minModelCords.y = node.Coordinates.Y;
+                    MinModelCords.y = node.Coordinates.Y;
                 }
-                if (node.Coordinates.X > maxModelCords.x)
+                if (node.Coordinates.X > MaxModelCords.x)
                 {
-                    maxModelCords.x = node.Coordinates.X;
+                    MaxModelCords.x = node.Coordinates.X;
                 }
-                if (node.Coordinates.Y > maxModelCords.y)
+                if (node.Coordinates.Y > MaxModelCords.y)
                 {
-                    maxModelCords.y = node.Coordinates.Y;
+                    MaxModelCords.y = node.Coordinates.Y;
                 }
             }
 
             // Transform into size of view, where between every coordinate of the model a coordinate for arrows gets inserted
-            (int x, int y) modelSize = (Math.Abs(maxModelCords.x - minModelCords.x) + 1,
-                                       Math.Abs(maxModelCords.y - minModelCords.y) + 1);
+            (int x, int y) modelSize = (Math.Abs(MaxModelCords.x - MinModelCords.x) + 1,
+                                       Math.Abs(MaxModelCords.y - MinModelCords.y) + 1);
             (int x, int y) viewSize = ((modelSize.x * 2) - 1, (modelSize.y * 2) - 1);
 
             // Generate panel with columns and rows with size
@@ -768,8 +769,8 @@ namespace BasicLogisticLoop
         private (int column, int row) TransformCoordinatesModelToView((int x, int y) coordinates)
         {
             // offset the model coordinates to begin at 0
-            int offsetX = coordinates.x - minModelCords.x;
-            int offsetY = coordinates.y - minModelCords.y;
+            int offsetX = coordinates.x - MinModelCords.x;
+            int offsetY = coordinates.y - MinModelCords.y;
 
             // expand the model coordinates over just the even columns/rows
             return (offsetX * 2, offsetY * 2);
