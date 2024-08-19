@@ -75,19 +75,20 @@ namespace BasicLogisticLoop
         {
             foreach (ViewNode changedNode in changedNodes)
             {
-                // Find the matching ViewNode in the views NodeData
-                ViewNode nodeToUpdate = NodeData.Find(oldNode => oldNode.NodeID == changedNode.NodeID);
+                // Update the ViewNode in the views NodeData to the new node
+                int index = NodeData.FindIndex(n =>  n.NodeID == changedNode.NodeID);
+                if (index > -1)
+                {
+                    NodeData[index] = changedNode;
+                }
 
-                // Update the ViewNode in the views NodeData to the new data
-                nodeToUpdate = changedNode;
-
-                // Update the corresponding label in the view with the new data
-                UpdateNode(nodeToUpdate);
+                // Update the corresponding label in the view with the new node
+                UpdateNode(changedNode);
             }
         }
 
         /// <summary>
-        /// Updates the label in the view representing the given ViewNode with its data.
+        /// Updates the labels in the view representing the given ViewNode with its data.
         /// Works even when viewNodes have multiple Labels representing them displayed in the view.
         /// </summary>
         /// <param name="node">ViewNode to update in the view.</param>
