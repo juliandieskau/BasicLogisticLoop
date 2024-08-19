@@ -57,6 +57,7 @@ namespace BasicLogisticLoop
             Name = "BasicLogisticLoop";
             AutoSize = false;
             Size = new Size(1600, 900);
+            ClientSize = new Size(1600, 900);
             StartPosition = FormStartPosition.CenterScreen;
             MaximizeBox = false;
             ShowIcon = false;

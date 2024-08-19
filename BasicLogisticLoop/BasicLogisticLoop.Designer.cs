@@ -1,4 +1,7 @@
-﻿namespace BasicLogisticLoop
+﻿using System.Drawing;
+using System.Windows.Forms;
+
+namespace BasicLogisticLoop
 {
     partial class BasicLogisticLoopForm
     {
@@ -34,11 +37,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Name = "BasicLogisticLoopForm";
-            this.Text = "Logistikoop Basic";
             this.ResumeLayout(false);
-
         }
 
         #endregion
