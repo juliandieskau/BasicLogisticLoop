@@ -164,6 +164,7 @@ namespace BasicLogisticLoop
                 }
             }
 
+            // Place node labels and arrow labels 
             int arrowNumber = 0;
             foreach (ViewNode node in NodeData)
             {
@@ -176,20 +177,30 @@ namespace BasicLogisticLoop
                 panel.SetColumn(nodeLabel, nodePosition.column);
                 panel.Controls.Add(nodeLabel);
 
-                // Generate arrow labels by checking ViewNode.FollowingNodes
+                // if node is storage node -> add all warehouse nodes to following nodes (not represented in graph!)
+                // loop will check if the warehouse is the one that is in the correct position for the storage node
+                List<int> followingNodes = node.FollowingNodes.ToList();
+                if (node.Type == NodeType.Storage)
+                {
+                    followingNodes.AddRange(NodeData.FindAll(x => x.Type == NodeType.Warehouse)
+                                                    .Select(n => n.NodeID).ToList()
+                                           );
+                }
+
+                // Generate arrow labels by checking which nodes are adjacent to the current one
                 // placing the arrow in the mean of the node and each following node (if distance is 2 rows/columns)
-                foreach (int followingID in node.FollowingNodes)
+                foreach (int followingID in followingNodes)
                 {
                     ViewNode followingNode = NodeData.Find(n => n.NodeID == followingID);
                     // check if arrow can be validly placed
                     if (ArrowIsPlacable(node.Coordinates, followingNode.Coordinates))
                     {
                         // calculate the arrows position in the panel
-                        (int column, int row) arrowPosition = TransformCoordinatesModelToView(followingNode.Coordinates);
-                        int arrowColumnPos = (nodePosition.column + arrowPosition.column) / 2;
-                        int arrowRowPos = (nodePosition.row + arrowPosition.row) / 2;
+                        (int column, int row) followingPosition = TransformCoordinatesModelToView(followingNode.Coordinates);
+                        int arrowColumnPos = (nodePosition.column + followingPosition.column) / 2;
+                        int arrowRowPos = (nodePosition.row + followingPosition.row) / 2;
 
-                        // calculate the arrows direction 
+                        // calculate the arrow string by its direction
                         string direction = GetArrowDirection(node.Coordinates, followingNode.Coordinates);
 
                         // Check if panel already has an arrow (in other direction) on the given row and column
@@ -216,7 +227,7 @@ namespace BasicLogisticLoop
 
                         // arrow label is now placed if valid
                     }
-                    // if not valid, just skip the edge without throwing an error (shouldn't happen anyway :D)
+                    // if not valid, just skip the edge without throwing an error (-> might be warehouse nodes that arent adjacent to storage nodes)
                 }
             }
             
