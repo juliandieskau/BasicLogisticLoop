@@ -90,7 +90,7 @@ namespace BasicLogisticLoop.Presenter
             View.UpdateWithViewNodes(changedNodes);
             if (message == "")
             {
-                message = "Updated View with updated nodes.";
+                //message = "Updated View with updated nodes.";
             }
 
             return message;
