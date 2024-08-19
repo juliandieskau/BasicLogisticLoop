@@ -97,6 +97,8 @@ namespace BasicLogisticLoop.Model
         /// <returns>ErrorMessage when error occurs or empty string if successful.</returns>
         public string Step()
         {
+            string message = "";
+
             // Save references to all graph nodes that have not been handled yet and make sure none are handled twice in one step.
             // Handling node: Moving the container on a node if it has one.
             List<int> unhandledNodeIDs = GraphNodes.Select(n => n.NodeID).ToList();
@@ -168,6 +170,7 @@ namespace BasicLogisticLoop.Model
                 }
             }
 
+            // TODO NOT WORKING
             // 4.) Retrieval-Nodes: Move Container on Retrieval-Node into the loop if adjacent node is empty.
             // Search all retrieval nodes
             List<int> retrievalNodeIDs = unhandledNodeIDs.FindAll(x => GetGraphNode(x).Type == NodeType.Retrieval);
@@ -179,7 +182,7 @@ namespace BasicLogisticLoop.Model
                 {
                     // Get the node to move the container to and if its empty
                     GraphNode followingNode = GetAdjacentGraphNodeOfType(retrievalNode, NodeType.Conveyor);
-                    if (followingNode != null && !followingNode.IsEmpty())
+                    if (followingNode != null && followingNode.IsEmpty())
                     {
                         // Check if the loop will be stuck after moving container from retrieval node into it 
                         if (IsRetrievalAllowed(followingNode))
@@ -221,7 +224,7 @@ namespace BasicLogisticLoop.Model
             }
 
             // return successful completion of method
-            return "";
+            return message;
         }
 
         // To show step by step how one step of a cycle is performed: (TODO if wanted)
@@ -357,7 +360,18 @@ namespace BasicLogisticLoop.Model
                     (   (fromNode.Type == NodeType.Conveyor)        && (toNode.Type == NodeType.Storage)        )|
                     (   (fromNode.Type == NodeType.Commissioning)   && (toNode.Type == NodeType.Conveyor)       ))
             {
-                toNode.ChangeContainer(fromNode.GetContainer());
+                // Set container on receiving node from sending node
+                int toIndex = GraphNodes.FindIndex(n => n.NodeID == toNode.NodeID);
+                if (toIndex > -1)
+                {
+                    GraphNodes[toIndex].ChangeContainer(fromNode.GetContainer());
+                }
+                // Remove container from sending node
+                int fromIndex = GraphNodes.FindIndex(n => n.NodeID == fromNode.NodeID);
+                if (fromIndex > -1)
+                {
+                    GraphNodes[fromIndex].ChangeContainer(null);
+                }
             }
             else
             {

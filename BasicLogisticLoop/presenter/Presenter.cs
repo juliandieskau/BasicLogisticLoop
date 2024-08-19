@@ -43,7 +43,7 @@ namespace BasicLogisticLoop.Presenter
                 throw new ArgumentNullException("view needs to be a valid BasicLogisticLoopForm object!");
             }
             Model = new BasicLoopLogisticModel();
-            CurrentNodes = this.Model.GetViewNodes();
+            CurrentNodes = Model.GetViewNodes();
             View.InitializeView(Model.GetViewNodes());
         }
 
@@ -107,7 +107,12 @@ namespace BasicLogisticLoop.Presenter
             // Contains():
             //      Equals() Method that is overridden in ViewNode will be taken as comparison for Contains()
             //      Equals() Method checks if the ViewNode has the same NodeType and NodeID and if it has the same Container on it
-            return newCurrentNodes.FindAll(node => !CurrentNodes.Contains(node));
+            newCurrentNodes = newCurrentNodes.FindAll(node => !CurrentNodes.Contains(node));
+
+            // replace changed CurrentNodes
+            CurrentNodes = newCurrentNodes;
+
+            return newCurrentNodes;
         }
     }
 }
