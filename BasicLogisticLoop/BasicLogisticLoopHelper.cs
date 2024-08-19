@@ -266,7 +266,7 @@ namespace BasicLogisticLoop
         {
             TableLayoutPanel panel = new TableLayoutPanel()
             {
-                CellBorderStyle = TableLayoutPanelCellBorderStyle.None,
+                CellBorderStyle = TableLayoutPanelCellBorderStyle.Single,
                 Name = "rightTableLayoutPanel",
                 AutoSize = true,
                 Dock = DockStyle.Bottom,
@@ -422,6 +422,7 @@ namespace BasicLogisticLoop
             // default label attribute values
             BorderStyle border = BorderStyle.None;
             FontStyle fontStyle = FontStyle.Regular;
+            float fontSize = 16.0f;
             string text = "";
 
             text = LabelType.GetText(labelType);
@@ -429,12 +430,12 @@ namespace BasicLogisticLoop
             switch (labelType)
             {
                 case LabelType.Retrieval:
-                    border = BorderStyle.FixedSingle;
                     fontStyle = FontStyle.Bold;
+                    fontSize = 20.0f;
                     break;
                 case LabelType.NodeDetails:
-                    border = BorderStyle.FixedSingle;
                     fontStyle = FontStyle.Bold;
+                    fontSize = 20.0f;
                     break;
                 case LabelType.Container:
                     fontStyle = FontStyle.Bold; 
@@ -463,7 +464,7 @@ namespace BasicLogisticLoop
                 Name = LabelType.GetName(labelType),
                 Text = text,
                 TextAlign = ContentAlignment.MiddleLeft,
-                Font = new Font(new FontFamily("Arial"), 16, fontStyle, GraphicsUnit.Pixel),
+                Font = new Font(new FontFamily("Arial"), fontSize, fontStyle, GraphicsUnit.Pixel),
                 AutoSize = true,
                 Dock = DockStyle.Fill,
                 BorderStyle = border,
@@ -536,9 +537,9 @@ namespace BasicLogisticLoop
                 ReadOnly = readOnly,
                 MaxLength = 400,
                 Multiline = true,
-                BorderStyle = BorderStyle.Fixed3D,
-                Text = exampleText,
-                Font = new Font(new FontFamily("Arial"), 16, FontStyle.Regular, GraphicsUnit.Pixel),
+                BorderStyle = BorderStyle.FixedSingle,
+                Text = readOnly ? "<select node>" : exampleText,
+                Font = new Font(new FontFamily("Consolas"), 15, FontStyle.Regular, GraphicsUnit.Pixel),
                 Dock = DockStyle.Fill,
                 Margin = new Padding(3)
             };
@@ -742,11 +743,11 @@ namespace BasicLogisticLoop
             {
                 return "right";
             }
-            else if (fromCoords.x == toCoords.x && fromCoords.y > toCoords.y)
+            else if (fromCoords.x == toCoords.x && fromCoords.y < toCoords.y)
             {
                 return "down";
             }
-            else if (fromCoords.x == toCoords.x && fromCoords.y < toCoords.y)
+            else if (fromCoords.x == toCoords.x && fromCoords.y > toCoords.y)
             {
                 return "up";
             }

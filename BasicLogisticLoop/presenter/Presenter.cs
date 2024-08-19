@@ -87,7 +87,11 @@ namespace BasicLogisticLoop.Presenter
 
             // handle view update
             List<ViewNode> changedNodes = FilterUnchangedNodes(Model.GetViewNodes());
-            this.View.UpdateWithViewNodes(changedNodes);
+            View.UpdateWithViewNodes(changedNodes);
+            if (message == "")
+            {
+                message = "Updated View with updated nodes.";
+            }
 
             return message;
         }
