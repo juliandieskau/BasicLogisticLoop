@@ -124,7 +124,6 @@ namespace BasicLogisticLoop.Model
             // 2.) Conveyor-Nodes: Move Container adjacent to Storage-Node onto it if it's their destination.
             unhandledNodeIDs = StepConveyorToStorage(unhandledNodeIDs);
 
-            // TODO NOT WORKING : Container stays on adjacent node and doesnt go on commissioning
             // 3.) Conveyor-Nodes: Move Container adjacent to Commissioning-Node onto it if it's their destination and it's empty.
             unhandledNodeIDs = StepConveyorToCommission(unhandledNodeIDs);
 
@@ -132,7 +131,7 @@ namespace BasicLogisticLoop.Model
             unhandledNodeIDs = StepRetrievalToConveyor(unhandledNodeIDs);
 
             // 5.) Conveyor-Nodes: Move Containers one node forward in the conveyor loop if target node of step is not adjacent to occupied Retrieval-Node.
-            unhandledNodeIDs = StepConveyorToConveyor(unhandledNodeIDs);
+            unhandledNodeIDs = StepConveyorToConveyor(unhandledNodeIDs, ref message);
 
             // 6.) Retrieval-Nodes: Move Container on Retrieval-Node into the loop if adjacent conveyor node is empty after loop has moved and hasn't been retrieved before.
             unhandledNodeIDs = StepRetrievalToConveyor(unhandledNodeIDs);
@@ -424,16 +423,19 @@ namespace BasicLogisticLoop.Model
         /// </summary>
         /// <param name="unhandledNodeIDs">NodeIDs to check for moving containers from.</param>
         /// <returns>NodeIDs that havent moved the container after conveyor -> conveyor is completed.</returns>
-        private List<int> StepConveyorToConveyor(List<int> unhandledNodeIDs)
+        private List<int> StepConveyorToConveyor(List<int> unhandledNodeIDs, ref string message)
         {
             List<int> conveyorNodeIDs = GraphNodes.Select(n => n.NodeID).ToList().FindAll(x => GetGraphNode(x).Type == NodeType.Conveyor);
 
             // start with a commissioning nodes adjacent conveyorNode and save the container on the first node to give to the last
             GraphNode currentNode = GetAdjacentGraphNodeOfType(GraphNodes.Find(x => x.Type == NodeType.Commissioning), NodeType.Conveyor);
             GraphNode firstNode = currentNode;
-            Container firstContainer = GetGraphNode(currentNode.NodeID).GetContainer();
 
-            // loop backwards over conveyor nodes
+            // remove container from starting node of the loop and save into temporary storage
+            Container firstContainer = GetGraphNode(currentNode.NodeID).GetContainer();
+            currentNode.ChangeContainer(null);
+
+            // loop backwards over conveyor nodes except the starting one
             for (int i = 0; i < conveyorNodeIDs.Count - 1; i++)
             {
                 // get CONVEYOR node current node is adjacent to
@@ -453,10 +455,21 @@ namespace BasicLogisticLoop.Model
                 }
                 currentNode = originNode;
             }
+
             // assign the last node the container of the first node to connect the loop (if first node wasnt handled yet)
-            if (!unhandledNodeIDs.Contains(firstNode.NodeID))
+            if (unhandledNodeIDs.Contains(firstNode.NodeID))
             {
-                currentNode.ChangeContainer(firstContainer);
+                // only change container on tile if the first one had a container
+                if (firstContainer != null) {
+                    if (!currentNode.IsEmpty())
+                    {
+                        throw new InvalidOperationException(ErrorMessages.StepError);
+                    }
+
+                    // "move container" but the origin was already handled and overwritten so firstContainer was saved
+                    currentNode.ChangeContainer(firstContainer);
+                    unhandledNodeIDs.Remove(firstNode.NodeID);
+                }
             }
             return unhandledNodeIDs;
         }
