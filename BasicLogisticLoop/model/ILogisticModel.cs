@@ -38,8 +38,9 @@ namespace BasicLogisticLoop.Model
         /// Adds given container from the blackbox warehouse to the given retrieval node - if empty - with destination commissioning.
         /// </summary>
         /// <param name="nodeID">ID of retrieval node to which the container should be added.</param>
+        /// <param name="containerTUN">TransportUnitNumber of container to retrieve.</param>
         /// <param name="content">Content that should be added in a container.</param>
         /// <returns>ErrorMessage if retrieval node is not empty.</returns>
-        string RetrieveContainer(int nodeID, string content);
+        string RetrieveContainer(int nodeID, int containerTUN, string content);
     }
 }

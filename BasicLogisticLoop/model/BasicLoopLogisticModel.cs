@@ -194,10 +194,11 @@ namespace BasicLogisticLoop.Model
         /// Creates a container with the given content, a generated TransportUnit-Number and gives it the destination "Commissioning".
         /// </summary>
         /// <param name="nodeID">ID of retrieval node to place the new container on.</param>
+        /// <param name="containerTUN">TransportUnitNumber of container to retrieve.</param>
         /// <param name="content">Content of container to place onto the retrieval node.</param>
         /// <returns>ErrorMessage when adjacent node to commission node is occupied or empty string if successful.</returns>
         /// <exception cref="ArgumentException">When the given nodeID does not match a retrieval node.</exception>
-        public string RetrieveContainer(int nodeID, string content)
+        public string RetrieveContainer(int nodeID, int containerTUN, string content)
         {
             GraphNode node = GetGraphNode(nodeID);
             // Check if node is retrieval node
@@ -212,8 +213,15 @@ namespace BasicLogisticLoop.Model
                 return ErrorMessages.RetrievalError;
             }
 
+            // Check given TUN
+            if (containerTUN == 0)
+            {
+                containerTUN = currentTUN;
+            }
+            currentTUN++;
+
             // Create container with input
-            Container container = new Container(transportUnitNumber: ++currentTUN, content: content, destinationType: NodeType.Commissioning);
+            Container container = new Container(transportUnitNumber: containerTUN, content: content, destinationType: NodeType.Commissioning);
             node.ChangeContainer(container);
             return "";
         }

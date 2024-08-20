@@ -166,7 +166,7 @@ namespace BasicLogisticLoop
                 // Get the input data to give the model, no error checking since errors here should crash the program (wrong logic)
                 int nodeID = NodeData.Find(node => node.Type == NodeType.Retrieval).NodeID;
                 TextBox retrievalTextBox = Controls.Find("retrievalTextBox", true).First() as TextBox;
-                String content = retrievalTextBox.Text;
+                string content = retrievalTextBox.Text;
 
                 // let presenter update model with input (update model in view is called from presenter)
                 IInput input = new RetrievalInput(nodeID, content);
@@ -177,6 +177,29 @@ namespace BasicLogisticLoop
                 {
                     retrievalTextBox.Text = GetRandomContainerContent();
                 }
+            }
+            else if (button.Name == "retrievalStepButton")
+            {
+                // RETRIEVE
+                // Get the input data to give the model, no error checking since errors here should crash the program (wrong logic)
+                int nodeID = NodeData.Find(node => node.Type == NodeType.Retrieval).NodeID;
+                TextBox retrievalTextBox = Controls.Find("retrievalTextBox", true).First() as TextBox;
+                string content = retrievalTextBox.Text;
+
+                // let presenter update model with input (update model in view is called from presenter)
+                IInput retrievalInput = new RetrievalInput(nodeID, content);
+                errorMessage = Presenter.ReceiveInput(retrievalInput);
+
+                // Fill TextBox with new random items to be used if user is lazy
+                if (errorMessage == "")
+                {
+                    retrievalTextBox.Text = GetRandomContainerContent();
+                }
+
+                // STEP
+                // let presenter update model with input (update model in view is called from presenter)
+                IInput stepInput = new StepInput();
+                errorMessage = Presenter.ReceiveInput(stepInput);
             }
             
             // Output error message if receiving input failed

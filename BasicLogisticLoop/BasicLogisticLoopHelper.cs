@@ -246,15 +246,15 @@ namespace BasicLogisticLoop
             Panel panel = new Panel()
             {
                 BorderStyle = BorderStyle.None,
-                RightToLeft = RightToLeft.Yes,
                 Name = "buttonsPanel",
                 Dock = DockStyle.Fill,
                 AutoSize = false
             };
 
             // create and add buttons from right to left
-            panel.Controls.Add(GenerateButton("step"));
+            panel.Controls.Add(GenerateButton("retrievalStep"));
             panel.Controls.Add(GenerateButton("commission"));
+            panel.Controls.Add(GenerateButton("step"));
 
             return panel;
         }
@@ -480,7 +480,7 @@ namespace BasicLogisticLoop
         /// <summary>
         /// Method to generate a button for the view.
         /// </summary>
-        /// <param name="buttonType">Type of button to generate: Match step, commission, retrieval</param>
+        /// <param name="buttonType">Type of button to generate: Match step, commission, retrieval, retrievalStep</param>
         /// <returns>Generated Button.</returns>
         /// <exception cref="ArgumentException">When buttonType doesn't match the specified pattern.</exception>
         private Button GenerateButton(string buttonType)
@@ -502,6 +502,10 @@ namespace BasicLogisticLoop
                 case "retrieval":
                     dockStyle = DockStyle.Fill;
                     buttonText = "Retrieve container";
+                    break;
+                case "retrievalStep":
+                    dockStyle = DockStyle.Right;
+                    buttonText = "Retrieve container and step";
                     break;
                 default:
                     throw new ArgumentException("buttonType has to be either step, commission or retrieval!");
