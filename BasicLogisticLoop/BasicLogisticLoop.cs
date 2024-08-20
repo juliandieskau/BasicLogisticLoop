@@ -173,7 +173,10 @@ namespace BasicLogisticLoop
                 errorMessage = Presenter.ReceiveInput(input);
 
                 // Fill TextBox with new random items to be used if user is lazy
-                retrievalTextBox.Text = GetRandomContainerContent();
+                if (errorMessage == "")
+                {
+                    retrievalTextBox.Text = GetRandomContainerContent();
+                }
             }
             
             // Output error message if receiving input failed
