@@ -167,15 +167,26 @@ namespace BasicLogisticLoop
                 int nodeID = NodeData.Find(node => node.Type == NodeType.Retrieval).NodeID;
                 TextBox retrievalTextBox = Controls.Find("retrievalTextBox", true).First() as TextBox;
                 string content = retrievalTextBox.Text;
+                TextBox tunTextBox = Controls.Find("tunTextBox", true).First() as TextBox;
+                int containerTUN = 0;
+                try
+                {
+                    containerTUN = Int32.Parse(tunTextBox.Text);
+                }
+                catch (Exception ex)
+                {
+                    containerTUN = 0;
+                }
 
                 // let presenter update model with input (update model in view is called from presenter)
-                IInput input = new RetrievalInput(nodeID, content);
+                IInput input = new RetrievalInput(nodeID, containerTUN, content);
                 errorMessage = Presenter.ReceiveInput(input);
 
                 // Fill TextBox with new random items to be used if user is lazy
                 if (errorMessage == "")
                 {
                     retrievalTextBox.Text = GetRandomContainerContent();
+                    tunTextBox.Text = "";
                 }
             }
             else if (button.Name == "retrievalStepButton")
@@ -185,15 +196,26 @@ namespace BasicLogisticLoop
                 int nodeID = NodeData.Find(node => node.Type == NodeType.Retrieval).NodeID;
                 TextBox retrievalTextBox = Controls.Find("retrievalTextBox", true).First() as TextBox;
                 string content = retrievalTextBox.Text;
+                TextBox tunTextBox = Controls.Find("tunTextBox", true).First() as TextBox;
+                int containerTUN = 0;
+                try
+                {
+                    containerTUN = Int32.Parse(tunTextBox.Text);
+                }
+                catch (Exception ex)
+                {
+                    containerTUN = 0;
+                }
 
                 // let presenter update model with input (update model in view is called from presenter)
-                IInput retrievalInput = new RetrievalInput(nodeID, content);
+                IInput retrievalInput = new RetrievalInput(nodeID, containerTUN, content);
                 errorMessage = Presenter.ReceiveInput(retrievalInput);
 
                 // Fill TextBox with new random items to be used if user is lazy
                 if (errorMessage == "")
                 {
                     retrievalTextBox.Text = GetRandomContainerContent();
+                    tunTextBox.Text = "";
                 }
 
                 // STEP

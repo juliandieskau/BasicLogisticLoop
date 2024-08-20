@@ -40,7 +40,7 @@ namespace BasicLogisticLoop.Presenter
             View = view as BasicLogisticLoopForm;
             if (View == null)
             {
-                throw new ArgumentNullException("view needs to be a valid BasicLogisticLoopForm object!");
+                throw new ArgumentNullException("View needs to be a valid BasicLogisticLoopForm object!");
             }
             Model = new BasicLoopLogisticModel();
             CurrentNodes = Model.GetViewNodes();

@@ -273,20 +273,22 @@ namespace BasicLogisticLoop
                 AutoSize = true,
                 Dock = DockStyle.Bottom,
                 ColumnCount = 1,
-                RowCount = 9
+                RowCount = 11
             };
 
             // create and add controls
             panel.Controls.AddRange(new Control[]
             {
-                GenerateRightPanelLabel("retrieval"),
-                GenerateRightPanelLabel("description"),
-                GenerateTextBox(false),
+                GenerateRightPanelLabel(LabelType.Retrieval),
+                GenerateRightPanelLabel(LabelType.RetrievedTUN),
+                GenerateTextBox("tun"),
+                GenerateRightPanelLabel(LabelType.Description),
+                GenerateTextBox("retrieval"),
                 GenerateButton("retrieval"),
-                GenerateRightPanelLabel("nodeDetails"),
-                GenerateRightPanelLabel("nodeType"),
-                GenerateRightPanelLabel("nodeID"),
-                GenerateRightPanelLabel("container"),
+                GenerateRightPanelLabel(LabelType.NodeDetails),
+                GenerateRightPanelLabel(LabelType.NodeType),
+                GenerateRightPanelLabel(LabelType.NodeID),
+                GenerateRightPanelLabel(LabelType.Container),
                 GenerateContainerPanel()
             });
 
@@ -294,7 +296,7 @@ namespace BasicLogisticLoop
             // set rows size
             for (int index = 0; index < 9; index++)
             {
-                if (index == 2)
+                if (index == 4)
                 {
                     panel.RowStyles.Add(new RowStyle(SizeType.Absolute, 200));
                 }
@@ -329,7 +331,7 @@ namespace BasicLogisticLoop
                 GenerateRightPanelLabel("tun"), 
                 GenerateRightPanelLabel("destination"),
                 GenerateRightPanelLabel("content"),
-                GenerateTextBox(true)
+                GenerateTextBox("container")
             });
 
             // set rows size
@@ -458,6 +460,8 @@ namespace BasicLogisticLoop
                     break;
                 case LabelType.Content:
                     break;
+                case LabelType.RetrievedTUN:
+                    break;
             }
 
             // create label
@@ -531,20 +535,42 @@ namespace BasicLogisticLoop
         /// <summary>
         /// Method to generate a textbox to enter or display text input by a user.
         /// </summary>
-        /// <param name="readOnly">True if for displaying text, false for entering.</param>
+        /// <param name="type">container, retrieval, tun</param>
         /// <returns>Generated TextBox.</returns>
-        private TextBox GenerateTextBox(bool readOnly)
+        private TextBox GenerateTextBox(string type)
         {
-            string exampleText = GetRandomContainerContent(); // generator for random text (supermarket products)
+            string text = "";
+            string name = "";
+            bool readOnly = false;
+            bool multiline = true;
+            int maxLength = 400;
+
+            switch (type)
+            {
+                case "container":
+                    name = "containerTextBox";
+                    readOnly = true;
+                    text = "<select node>";
+                    break;
+                case "retrieval":
+                    name = "retrievalTextBox";
+                    text = GetRandomContainerContent();
+                    break;
+                case "tun":
+                    name = "tunTextBox";
+                    multiline = false;
+                    maxLength = 10;
+                    break;
+            }
 
             TextBox textBox = new TextBox
             {
-                Name = readOnly ? "containerTextBox" : "retrievalTextBox",
+                Name = name,
                 ReadOnly = readOnly,
-                MaxLength = 400,
-                Multiline = true,
+                MaxLength = maxLength,
+                Multiline = multiline,
                 BorderStyle = BorderStyle.FixedSingle,
-                Text = readOnly ? "<select node>" : exampleText,
+                Text = text,
                 Font = new Font(new FontFamily("Consolas"), 15, FontStyle.Regular, GraphicsUnit.Pixel),
                 Dock = DockStyle.Fill,
                 Margin = new Padding(3)
@@ -668,6 +694,7 @@ namespace BasicLogisticLoop
             public const string TUN = "tun";
             public const string Destination = "destination";
             public const string Content = "content";
+            public const string RetrievedTUN = "retrievedTUN";
 
             /// <summary>
             /// Returns the text to display for a Label of the given type.
@@ -713,6 +740,10 @@ namespace BasicLogisticLoop
                 if (labelType == Content)
                 {
                     return "Content: ";
+                }
+                if (labelType == RetrievedTUN)
+                {
+                    return "Enter TUN of Container here:";
                 }
                 return "";
             }
