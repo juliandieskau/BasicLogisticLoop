@@ -118,126 +118,24 @@ namespace BasicLogisticLoop.Model
                 return ErrorMessages.StepError;
             }
 
-            // 1.) Storage-Nodes: Store Container into Warehouse to take out of cycle and clear up space.
-            // Search all storage nodes
-            List<int> storageNodeIDs = unhandledNodeIDs.FindAll(x => GetGraphNode(x).Type == NodeType.Storage);
-            foreach (int nodeID in storageNodeIDs)
-            {
-                GraphNode storageNode = GetGraphNode(nodeID);
-                if (storageNode != null)
-                {
-                    // Store container (to warehouse) on this node
-                    StoreContainer(storageNode);
-                }
-                unhandledNodeIDs.Remove(nodeID);
-            }
+            // 1.) Storage-Nodes: Store Container into Warehouse to take out of cycle.
+            unhandledNodeIDs = StepStorageToWarehouse(unhandledNodeIDs);
 
             // 2.) Conveyor-Nodes: Move Container adjacent to Storage-Node onto it if it's their destination.
-            foreach (int nodeID in unhandledNodeIDs)
-            {
-                // Find a conveyor node
-                GraphNode conveyorNode = GraphNodes.Find(x => x.NodeID == nodeID);
-                if (conveyorNode != null && conveyorNode.Type == NodeType.Conveyor)
-                {
-                    // Check if there's an adjacent storage node for the current node that is empty
-                    GraphNode storageNode = GetAdjacentGraphNodeOfType(conveyorNode, NodeType.Storage);
-                    if (storageNode != null && !storageNode.IsEmpty())
-                    {
-                        // Check if the destination of the nodes container is a storage node
-                        if (conveyorNode.GetContainer() != null && conveyorNode.GetContainer().DestinationType == NodeType.Storage)
-                        {
-                            // Move Container onto storage node
-                            MoveContainer(conveyorNode, storageNode);
-                            unhandledNodeIDs.Remove(conveyorNode.NodeID);
-                        }
-                    }
-                }
-            }
+            unhandledNodeIDs = StepConveyorToStorage(unhandledNodeIDs);
 
             // TODO NOT WORKING : Container stays on adjacent node and doesnt go on commissioning
             // 3.) Conveyor-Nodes: Move Container adjacent to Commissioning-Node onto it if it's their destination and it's empty.
-            foreach (int nodeID in unhandledNodeIDs)
-            {
-                // Find a conveyor node
-                GraphNode conveyorNode = GraphNodes.Find(x => x.NodeID == nodeID);
-                if (conveyorNode != null && conveyorNode.Type == NodeType.Conveyor)
-                {
-                    // Check if there's an adjacent commissioning node for the current node
-                    GraphNode commissioningNode = GetAdjacentGraphNodeOfType(conveyorNode, NodeType.Commissioning);
-                    if (commissioningNode != null && !commissioningNode.IsEmpty())
-                    {
-                        // Check if the destination of the nodes container is a commissioning node
-                        if (conveyorNode.GetContainer() != null && conveyorNode.GetContainer().DestinationType == NodeType.Commissioning)
-                        {
-                            // Move Container onto commissioning node
-                            MoveContainer(conveyorNode, commissioningNode);
-                            unhandledNodeIDs.Remove(nodeID);
-                        }
-                    }
-                }
-            }
+            unhandledNodeIDs = StepConveyorToCommission(unhandledNodeIDs);
 
-            // 4.) Retrieval-Nodes: Move Container on Retrieval-Node into the loop if adjacent node is empty.
-            // Search all retrieval nodes
-            List<int> retrievalNodeIDs = unhandledNodeIDs.FindAll(x => GetGraphNode(x).Type == NodeType.Retrieval);
-            foreach (int nodeID in retrievalNodeIDs)
-            {
-                // Check if retrievalNode has a container on it (so it has to be moved)
-                GraphNode retrievalNode = GetGraphNode(nodeID);
-                if (retrievalNode != null && !retrievalNode.IsEmpty())
-                {
-                    // Get the node to move the container to and if its empty
-                    GraphNode followingNode = GetAdjacentGraphNodeOfType(retrievalNode, NodeType.Conveyor);
-                    if (followingNode != null && followingNode.IsEmpty())
-                    {
-                        // Check if the loop will be stuck after moving container from retrieval node into it 
-                        if (IsRetrievalAllowed(followingNode))
-                        {
-                            // Move the container
-                            MoveContainer(retrievalNode, followingNode);
-
-                            // remove the loop conveyor from being handled again, container on it already moved
-                            unhandledNodeIDs.Remove(retrievalNode.NodeID); // nothing happens to the retrieval node after, just formalism
-                            unhandledNodeIDs.Remove(followingNode.NodeID);
-                        }
-
-                    }
-                }
-            }
+            // 4.) Retrieval-Nodes: Move Container on Retrieval-Node into the loop if adjacent conveyor node is empty.
+            unhandledNodeIDs = StepRetrievalToConveyor(unhandledNodeIDs);
 
             // 5.) Conveyor-Nodes: Move Containers one node forward in the conveyor loop if target node of step is not adjacent to occupied Retrieval-Node.
-            List<int> conveyorNodeIDs = GraphNodes.Select(n => n.NodeID).ToList().FindAll(x => GetGraphNode(x).Type == NodeType.Conveyor);
+            unhandledNodeIDs = StepConveyorToConveyor(unhandledNodeIDs);
 
-            // start with a commissioning nodes adjacent conveyorNode and save the container on the first node to give to the last
-            GraphNode currentNode = GetAdjacentGraphNodeOfType(GraphNodes.Find(x => x.Type == NodeType.Commissioning), NodeType.Conveyor);
-            GraphNode firstNode = currentNode;
-            Container firstContainer = GetGraphNode(currentNode.NodeID).GetContainer();
-
-            // loop backwards over conveyor nodes
-            for (int i = 0; i < conveyorNodeIDs.Count - 1; i++)
-            {
-                // get CONVEYOR node current node is adjacent to
-                GraphNode originNode = GraphNodes.FindAll(n => Graph.GetAdjacentNodes(n.NodeID)
-                                                    .Contains(currentNode.NodeID))
-                                                    .Find(n => n.Type == NodeType.Conveyor);
-
-                // if node not handled before move the container from it onto the target
-                if (unhandledNodeIDs.Contains(originNode.NodeID))
-                {
-                    // check that the origin conveyor has a container and that the target container is empty
-                    if (!originNode.IsEmpty() && currentNode.IsEmpty())
-                    {   
-                        MoveContainer(originNode, currentNode);
-                    }
-                    unhandledNodeIDs.Remove(originNode.NodeID);
-                }
-                currentNode = originNode;
-            }
-            // assign the last node the container of the first node to connect the loop (if first node wasnt handled yet)
-            if (!unhandledNodeIDs.Contains(firstNode.NodeID))
-            {
-                currentNode.ChangeContainer(firstContainer);
-            }
+            // 6.) Retrieval-Nodes: Move Container on Retrieval-Node into the loop if adjacent conveyor node is empty after loop has moved and hasn't been retrieved before.
+            unhandledNodeIDs = StepRetrievalToConveyor(unhandledNodeIDs);
 
             // return successful completion of step
             return message;
@@ -398,8 +296,14 @@ namespace BasicLogisticLoop.Model
             }
         }
 
+        /// <summary>
+        /// STEP 1: Containers on Storage Node -> Warehouse Node
+        /// </summary>
+        /// <param name="unhandledNodeIDs">NodeIDs to check for moving containers from.</param>
+        /// <returns>NodeIDs that havent moved the container after storage -> warehouse is completed.</returns>
         private List<int> StepStorageToWarehouse(List<int> unhandledNodeIDs) 
         {
+            // Search all storage nodes
             List<int> storageNodeIDs = unhandledNodeIDs.FindAll(x => GetGraphNode(x).Type == NodeType.Storage);
             foreach (int nodeID in storageNodeIDs)
             {
@@ -414,24 +318,143 @@ namespace BasicLogisticLoop.Model
             return unhandledNodeIDs;
         }
 
+        /// <summary>
+        /// STEP 2: Containers on Conveyor Node -> Storage Node
+        /// </summary>
+        /// <param name="unhandledNodeIDs">NodeIDs to check for moving containers from.</param>
+        /// <returns>NodeIDs that havent moved their container after conveyor -> storage is completed.</returns>
         private List<int> StepConveyorToStorage(List<int> unhandledNodeIDs) 
         {
-            
+            foreach (int nodeID in unhandledNodeIDs)
+            {
+                // Find a conveyor node
+                GraphNode conveyorNode = GraphNodes.Find(x => x.NodeID == nodeID);
+                if (conveyorNode != null && conveyorNode.Type == NodeType.Conveyor)
+                {
+                    // Check if there's an adjacent storage node for the current node that is empty
+                    GraphNode storageNode = GetAdjacentGraphNodeOfType(conveyorNode, NodeType.Storage);
+                    if (storageNode != null && !storageNode.IsEmpty())
+                    {
+                        // Check if the destination of the nodes container is a storage node
+                        if (conveyorNode.GetContainer() != null && conveyorNode.GetContainer().DestinationType == NodeType.Storage)
+                        {
+                            // Move Container onto storage node
+                            MoveContainer(conveyorNode, storageNode);
+                            unhandledNodeIDs.Remove(conveyorNode.NodeID);
+                        }
+                    }
+                }
+            }
+            return unhandledNodeIDs;
         }
 
+        // TODO NOT WORKING : Container stays on adjacent node and doesnt go on commissioning
+        /// <summary>
+        /// STEP 3: Containers on Conveyor Node -> Commission Node
+        /// </summary>
+        /// <param name="unhandledNodeIDs">NodeIDs to check for moving containers from.</param>
+        /// <returns>NodeIDs that havent moved the container after conveyor -> commission is completed.</returns>
         private List<int> StepConveyorToCommission(List<int> unhandledNodeIDs)
         {
-
+            foreach (int nodeID in unhandledNodeIDs)
+            {
+                // Find a conveyor node
+                GraphNode conveyorNode = GraphNodes.Find(x => x.NodeID == nodeID);
+                if (conveyorNode != null && conveyorNode.Type == NodeType.Conveyor)
+                {
+                    // Check if there's an adjacent commissioning node for the current node
+                    GraphNode commissioningNode = GetAdjacentGraphNodeOfType(conveyorNode, NodeType.Commissioning);
+                    if (commissioningNode != null && !commissioningNode.IsEmpty())
+                    {
+                        // Check if the destination of the nodes container is a commissioning node
+                        if (conveyorNode.GetContainer() != null && conveyorNode.GetContainer().DestinationType == NodeType.Commissioning)
+                        {
+                            // Move Container onto commissioning node
+                            MoveContainer(conveyorNode, commissioningNode);
+                            unhandledNodeIDs.Remove(nodeID);
+                        }
+                    }
+                }
+            }
+            return unhandledNodeIDs;
         }
 
+        /// <summary>
+        /// STEP 4 (AND 6): Containers on Retrieval Node -> Conveyor Node
+        /// </summary>
+        /// <param name="unhandledNodeIDs">NodeIDs to check for moving containers from.</param>
+        /// <returns>NodeIDs that havent moved the container after retrieval -> conveyor is completed.</returns>
         private List<int> StepRetrievalToConveyor(List<int> unhandledNodeIDs)
         {
+            // Search all retrieval nodes
+            List<int> retrievalNodeIDs = unhandledNodeIDs.FindAll(x => GetGraphNode(x).Type == NodeType.Retrieval);
+            foreach (int nodeID in retrievalNodeIDs)
+            {
+                // Check if retrievalNode has a container on it (so it has to be moved)
+                GraphNode retrievalNode = GetGraphNode(nodeID);
+                if (retrievalNode != null && !retrievalNode.IsEmpty())
+                {
+                    // Get the node to move the container to and if its empty
+                    GraphNode followingNode = GetAdjacentGraphNodeOfType(retrievalNode, NodeType.Conveyor);
+                    if (followingNode != null && followingNode.IsEmpty())
+                    {
+                        // Check if the loop will be stuck after moving container from retrieval node into it 
+                        if (IsRetrievalAllowed(followingNode))
+                        {
+                            // Move the container
+                            MoveContainer(retrievalNode, followingNode);
 
+                            // remove the loop conveyor and retrieval node from being handled again, container on it already moved
+                            unhandledNodeIDs.Remove(retrievalNode.NodeID); 
+                            unhandledNodeIDs.Remove(followingNode.NodeID);
+                        }
+
+                    }
+                }
+            }
+            return unhandledNodeIDs;
         }
 
+        /// <summary>
+        /// STEP 5: Containers on Coneyor Node -> Conveyor Node
+        /// </summary>
+        /// <param name="unhandledNodeIDs">NodeIDs to check for moving containers from.</param>
+        /// <returns>NodeIDs that havent moved the container after conveyor -> conveyor is completed.</returns>
         private List<int> StepConveyorToConveyor(List<int> unhandledNodeIDs)
         {
+            List<int> conveyorNodeIDs = GraphNodes.Select(n => n.NodeID).ToList().FindAll(x => GetGraphNode(x).Type == NodeType.Conveyor);
 
+            // start with a commissioning nodes adjacent conveyorNode and save the container on the first node to give to the last
+            GraphNode currentNode = GetAdjacentGraphNodeOfType(GraphNodes.Find(x => x.Type == NodeType.Commissioning), NodeType.Conveyor);
+            GraphNode firstNode = currentNode;
+            Container firstContainer = GetGraphNode(currentNode.NodeID).GetContainer();
+
+            // loop backwards over conveyor nodes
+            for (int i = 0; i < conveyorNodeIDs.Count - 1; i++)
+            {
+                // get CONVEYOR node current node is adjacent to
+                GraphNode originNode = GraphNodes.FindAll(n => Graph.GetAdjacentNodes(n.NodeID)
+                                                    .Contains(currentNode.NodeID))
+                                                    .Find(n => n.Type == NodeType.Conveyor);
+
+                // if node not handled before move the container from it onto the target
+                if (unhandledNodeIDs.Contains(originNode.NodeID))
+                {
+                    // check that the origin conveyor has a container and that the target container is empty
+                    if (!originNode.IsEmpty() && currentNode.IsEmpty())
+                    {
+                        MoveContainer(originNode, currentNode);
+                    }
+                    unhandledNodeIDs.Remove(originNode.NodeID);
+                }
+                currentNode = originNode;
+            }
+            // assign the last node the container of the first node to connect the loop (if first node wasnt handled yet)
+            if (!unhandledNodeIDs.Contains(firstNode.NodeID))
+            {
+                currentNode.ChangeContainer(firstContainer);
+            }
+            return unhandledNodeIDs;
         }
 
         // ########################################
