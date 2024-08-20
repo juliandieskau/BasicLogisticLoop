@@ -161,18 +161,18 @@ namespace BasicLogisticLoop.Model
                 throw new ArgumentException("The given node does not match a commission node.");
             }
 
-            // Get node to move container to, if all are empty returns null
-            GraphNode followingNode = GetEmptyAdjacentGraphNode(commissionNode);
-            if (followingNode == null)
-            {
-                return ErrorMessages.CommissionError;
-            }
-
             // Check if commission node has container on it
             if (commissionNode.IsEmpty())
             {
                 // nothing to move so do nothing -> no error when spamming button
                 return "";
+            }
+
+            // Get node to move container to, if all are empty returns null
+            GraphNode followingNode = GetEmptyAdjacentGraphNode(commissionNode);
+            if (followingNode == null)
+            {
+                return ErrorMessages.CommissionError;
             }
 
             // Commission container: Give destinationType: Storage (even if was already commissioned but not moved to loop)
