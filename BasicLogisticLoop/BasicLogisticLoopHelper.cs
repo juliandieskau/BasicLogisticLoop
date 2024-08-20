@@ -640,11 +640,11 @@ namespace BasicLogisticLoop
                 "Steinofen Ciabatta", "Bio Röstkaffee", "Erdbeer Konfitüre", "Bio Haferpops"
             };
             string content = "";
-            for (int i = 0; i < random.Next(9); i++)
+            for (int i = 0; i <= random.Next(1, 9); i++)
             {
-                content += words[random.Next(words.Length)] + Environment.NewLine;
+                content += words[random.Next(0, words.Length)] + Environment.NewLine;
             }
-            return content += words[random.Next(words.Length)];
+            return content += words[random.Next(0, words.Length)];
         }
 
         // #################################################
