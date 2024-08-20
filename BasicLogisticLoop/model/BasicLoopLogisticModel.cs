@@ -131,7 +131,7 @@ namespace BasicLogisticLoop.Model
             unhandledNodeIDs = StepRetrievalToConveyor(unhandledNodeIDs);
 
             // 5.) Conveyor-Nodes: Move Containers one node forward in the conveyor loop if target node of step is not adjacent to occupied Retrieval-Node.
-            unhandledNodeIDs = StepConveyorToConveyor(unhandledNodeIDs, ref message);
+            unhandledNodeIDs = StepConveyorToConveyor(unhandledNodeIDs);
 
             // 6.) Retrieval-Nodes: Move Container on Retrieval-Node into the loop if adjacent conveyor node is empty after loop has moved and hasn't been retrieved before.
             unhandledNodeIDs = StepRetrievalToConveyor(unhandledNodeIDs);
@@ -332,10 +332,12 @@ namespace BasicLogisticLoop.Model
                 GraphNode conveyorNode = GraphNodes.Find(x => x.NodeID == nodeID);
                 if (conveyorNode != null && conveyorNode.Type == NodeType.Conveyor)
                 {
-                    // Check if there's an adjacent storage node for the current node that is empty
+                    // reached
+                    // Check if there's an adjacent empty storage node for the current node
                     GraphNode storageNode = GetAdjacentGraphNodeOfType(conveyorNode, NodeType.Storage);
-                    if (storageNode != null && !storageNode.IsEmpty())
+                    if (storageNode != null && storageNode.IsEmpty())
                     {
+                        // never reached
                         // Check if the destination of the nodes container is a storage node
                         if (conveyorNode.GetContainer() != null && conveyorNode.GetContainer().DestinationType == NodeType.Storage)
                         {
@@ -423,7 +425,7 @@ namespace BasicLogisticLoop.Model
         /// </summary>
         /// <param name="unhandledNodeIDs">NodeIDs to check for moving containers from.</param>
         /// <returns>NodeIDs that havent moved the container after conveyor -> conveyor is completed.</returns>
-        private List<int> StepConveyorToConveyor(List<int> unhandledNodeIDs, ref string message)
+        private List<int> StepConveyorToConveyor(List<int> unhandledNodeIDs)
         {
             List<int> conveyorNodeIDs = GraphNodes.Select(n => n.NodeID).ToList().FindAll(x => GetGraphNode(x).Type == NodeType.Conveyor);
 
