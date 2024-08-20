@@ -594,15 +594,15 @@ namespace BasicLogisticLoop
             switch (type)
             {
                 case NodeType.Conveyor:
-                    return "Conveyor";
+                    return " ";
                 case NodeType.Retrieval:
-                    return "Retrieval";
+                    return "AB";
                 case NodeType.Storage:
-                    return "Storage";
+                    return "EB";
                 case NodeType.Commissioning:
-                    return "Commissioning";
+                    return "K";
                 case NodeType.Warehouse:
-                    return "Warehouse";
+                    return "Lager";
                 default:
                     return "";
             }
