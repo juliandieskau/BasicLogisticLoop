@@ -325,8 +325,10 @@ namespace BasicLogisticLoop.Model
         /// <returns>NodeIDs that havent moved their container after conveyor -> storage is completed.</returns>
         private List<int> StepConveyorToStorage(List<int> unhandledNodeIDs) 
         {
-            foreach (int nodeID in unhandledNodeIDs)
+            for (int i = 0; i < unhandledNodeIDs.Count; i++)
             {
+                int nodeID = unhandledNodeIDs[i];
+
                 // Find a conveyor node
                 GraphNode conveyorNode = GraphNodes.Find(x => x.NodeID == nodeID);
                 if (conveyorNode != null && conveyorNode.Type == NodeType.Conveyor)
