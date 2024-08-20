@@ -348,7 +348,6 @@ namespace BasicLogisticLoop.Model
             return unhandledNodeIDs;
         }
 
-        // TODO NOT WORKING : Container stays on adjacent node and doesnt go on commissioning
         /// <summary>
         /// STEP 3: Containers on Conveyor Node -> Commission Node
         /// </summary>
@@ -356,22 +355,25 @@ namespace BasicLogisticLoop.Model
         /// <returns>NodeIDs that havent moved the container after conveyor -> commission is completed.</returns>
         private List<int> StepConveyorToCommission(List<int> unhandledNodeIDs)
         {
-            foreach (int nodeID in unhandledNodeIDs)
-            {
+            for (int i = 0; i < unhandledNodeIDs.Count; i++) {
+                int nodeID = unhandledNodeIDs[i];
+
                 // Find a conveyor node
-                GraphNode conveyorNode = GraphNodes.Find(x => x.NodeID == nodeID);
-                if (conveyorNode != null && conveyorNode.Type == NodeType.Conveyor)
+                GraphNode conveyorNode = GraphNodes.Find(x => x.NodeID == nodeID && x.Type == NodeType.Conveyor);
+                if (conveyorNode != null)
                 {
                     // Check if there's an adjacent commissioning node for the current node
                     GraphNode commissioningNode = GetAdjacentGraphNodeOfType(conveyorNode, NodeType.Commissioning);
-                    if (commissioningNode != null && !commissioningNode.IsEmpty())
+                    if (commissioningNode != null && commissioningNode.IsEmpty())
                     {
+                        // reached
                         // Check if the destination of the nodes container is a commissioning node
                         if (conveyorNode.GetContainer() != null && conveyorNode.GetContainer().DestinationType == NodeType.Commissioning)
                         {
                             // Move Container onto commissioning node
                             MoveContainer(conveyorNode, commissioningNode);
-                            unhandledNodeIDs.Remove(nodeID);
+                            unhandledNodeIDs.Remove(conveyorNode.NodeID);
+                            unhandledNodeIDs.Remove(conveyorNode.NodeID);
                         }
                     }
                 }
