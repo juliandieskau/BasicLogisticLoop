@@ -11,7 +11,9 @@ namespace BasicLogisticLoop.Model
     /// </summary>
     internal class BasicLoopLogisticModel : ILogisticModel
     {
-        // Objects of the model
+        // ########################################
+        // MODEL OBJECTS
+
         /// <summary>
         /// Graph Object that holds the nodes by ID and manages their adjacency to other nodes.
         /// </summary>
@@ -28,7 +30,9 @@ namespace BasicLogisticLoop.Model
         /// </summary>
         private List<ViewNode> WarehouseNodes;
 
-        // Values to use for the model
+        // ########################################
+        // MODEL VALUES
+
         /// <summary>
         /// Number of Nodes in the graph (excluding warehouse nodes, which are only present for the view).
         /// </summary>
@@ -89,6 +93,9 @@ namespace BasicLogisticLoop.Model
             return transformedNodes;
         }
 
+        // ########################################
+        // MODEL LOGIC METHODS
+
         /// <summary>
         /// Steps a cycle forward in the logistic loop. Moves every container one node forward inside the loop or outside of the loop,
         /// when adjacent to a destination node. Gives priority to certain nodes to handle their step first, to avoid race conditions.
@@ -141,12 +148,13 @@ namespace BasicLogisticLoop.Model
                         {
                             // Move Container onto storage node
                             MoveContainer(conveyorNode, storageNode);
-                            unhandledNodeIDs.Remove(nodeID);
+                            unhandledNodeIDs.Remove(conveyorNode.NodeID);
                         }
                     }
                 }
             }
 
+            // TODO NOT WORKING : Container stays on adjacent node and doesnt go on commissioning
             // 3.) Conveyor-Nodes: Move Container adjacent to Commissioning-Node onto it if it's their destination and it's empty.
             foreach (int nodeID in unhandledNodeIDs)
             {
@@ -187,13 +195,16 @@ namespace BasicLogisticLoop.Model
                         {
                             // Move the container
                             MoveContainer(retrievalNode, followingNode);
+
+                            // remove the loop conveyor from being handled again, container on it already moved
+                            unhandledNodeIDs.Remove(retrievalNode.NodeID); // nothing happens to the retrieval node after, just formalism
+                            unhandledNodeIDs.Remove(followingNode.NodeID);
                         }
-                        unhandledNodeIDs.Remove(nodeID);
+
                     }
                 }
             }
 
-            // TODO NOT WORKING
             // 5.) Conveyor-Nodes: Move Containers one node forward in the conveyor loop if target node of step is not adjacent to occupied Retrieval-Node.
             List<int> conveyorNodeIDs = GraphNodes.Select(n => n.NodeID).ToList().FindAll(x => GetGraphNode(x).Type == NodeType.Conveyor);
 
@@ -208,12 +219,13 @@ namespace BasicLogisticLoop.Model
                 // get CONVEYOR node current node is adjacent to
                 GraphNode originNode = GraphNodes.FindAll(n => Graph.GetAdjacentNodes(n.NodeID)
                                                     .Contains(currentNode.NodeID))
-                                                    .Find(n => n.Type == NodeType.Conveyor); // TODO gets the commission node and not conveyor nodes
+                                                    .Find(n => n.Type == NodeType.Conveyor);
 
-                // if node not handled before move the container from it onto the target (or the empty position "moves")
+                // if node not handled before move the container from it onto the target
                 if (unhandledNodeIDs.Contains(originNode.NodeID))
                 {
-                    if (!originNode.IsEmpty())
+                    // check that the origin conveyor has a container and that the target container is empty
+                    if (!originNode.IsEmpty() && currentNode.IsEmpty())
                     {   
                         MoveContainer(originNode, currentNode);
                     }
@@ -227,7 +239,7 @@ namespace BasicLogisticLoop.Model
                 currentNode.ChangeContainer(firstContainer);
             }
 
-            // return successful completion of method
+            // return successful completion of step
             return message;
         }
 
@@ -309,6 +321,9 @@ namespace BasicLogisticLoop.Model
             return "";
         }
 
+        // ########################################
+        // STEP METHODS
+
         /// <summary>
         /// Stores the container on given node into the warehouse, if the node is a storage node.
         /// </summary>
@@ -382,6 +397,45 @@ namespace BasicLogisticLoop.Model
                 throw new ArgumentException("The move between the two nodes is invalid.");
             }
         }
+
+        private List<int> StepStorageToWarehouse(List<int> unhandledNodeIDs) 
+        {
+            List<int> storageNodeIDs = unhandledNodeIDs.FindAll(x => GetGraphNode(x).Type == NodeType.Storage);
+            foreach (int nodeID in storageNodeIDs)
+            {
+                GraphNode storageNode = GetGraphNode(nodeID);
+                if (storageNode != null)
+                {
+                    // Store container (to warehouse) on this node
+                    StoreContainer(storageNode);
+                }
+                unhandledNodeIDs.Remove(nodeID);
+            }
+            return unhandledNodeIDs;
+        }
+
+        private List<int> StepConveyorToStorage(List<int> unhandledNodeIDs) 
+        {
+            
+        }
+
+        private List<int> StepConveyorToCommission(List<int> unhandledNodeIDs)
+        {
+
+        }
+
+        private List<int> StepRetrievalToConveyor(List<int> unhandledNodeIDs)
+        {
+
+        }
+
+        private List<int> StepConveyorToConveyor(List<int> unhandledNodeIDs)
+        {
+
+        }
+
+        // ########################################
+        // GRAPH METHODS
 
         /// <summary>
         /// Returns the GraphNode corresponding to the given nodeID.
@@ -461,6 +515,9 @@ namespace BasicLogisticLoop.Model
             // thus don't allow the retrieval
             return false;
         }
+
+        // ########################################
+        // CONSTRUCTOR METHODS
 
         /// <summary>
         /// Initializes Graph variable with an AdjacencyMatrixGraph filled with the edges defined in the LogisticLoop Basic.
