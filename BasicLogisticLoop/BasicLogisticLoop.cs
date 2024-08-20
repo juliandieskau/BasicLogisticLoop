@@ -200,6 +200,28 @@ namespace BasicLogisticLoop
         /// <param name="nodeLabel">Label to show the content of.</param>
         private void ShowContent(Label nodeLabel)
         {
+            // unhighlight all labels (reset to normal color)
+            Control modelPanel = Controls.Find("modelTableLayoutPanel", true).FirstOrDefault();
+            if (modelPanel != null)
+            {
+                // search all labels in model panel
+                foreach (Control control in modelPanel.Controls)
+                {
+                    Label label = control as Label;
+                    // only for node labels
+                    if (label != null &&
+                        (   label.Name.Contains(NodeTypeToString(NodeType.Conveyor))        |
+                            label.Name.Contains(NodeTypeToString(NodeType.Retrieval))       |
+                            label.Name.Contains(NodeTypeToString(NodeType.Commissioning))   |
+                            label.Name.Contains(NodeTypeToString(NodeType.Storage))         |
+                            label.Name.Contains(NodeTypeToString(NodeType.Warehouse))       ))
+                    {
+                        // unhighlight label: set background color
+                        label.BackColor = LabelBackColor;
+                    }
+                }
+            }
+
             // search the NodeData for the corresponding ViewNode of the clicked node label
             foreach (ViewNode node in NodeData)
             {
@@ -232,9 +254,12 @@ namespace BasicLogisticLoop
                     containerTextBox.Text = containerText;
 
                     // If label not found program should crash (wrong logic), so no error handling here
-                    return;
+
+                    // hightlight label: set background color
+                    nodeLabel.BackColor = LabelBackColorHighlighted;
                 }
             }
+            return;
         }
 
         /// <summary>

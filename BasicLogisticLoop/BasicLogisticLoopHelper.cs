@@ -16,6 +16,7 @@ namespace BasicLogisticLoop
 
         private const string LabelBaseName = "Label";
         private readonly Color LabelBackColor = Color.LightGray;
+        private readonly Color LabelBackColorHighlighted = Color.WhiteSmoke;
         private readonly Color WindowBackColor = Color.WhiteSmoke;
 
         // VARIABLES
