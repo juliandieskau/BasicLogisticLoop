@@ -290,14 +290,21 @@ namespace BasicLogisticLoop
         private TableLayoutPanel GenerateModelTable(string type)
         {
             int columnCount = type == "nodes" ? 5 : 3;
-            int rowCount = 0;
-            foreach (ViewNode node in NodeData)
+            // Add as many rows to display containers as there are nodes where they can be on
+            int rowCount = 2; // plus one row for legend, one for bottom row that fills the screen
+            if (type == "nodes")
             {
-                if (node.Type != NodeType.Warehouse)
+                foreach (ViewNode node in NodeData)
                 {
-                    rowCount++;
+                    if (node.Type != NodeType.Warehouse)
+                    {
+                        rowCount++;
+                    }
                 }
             }
+            // No containers at the start for storage since its empty, plus the two for legend and filler
+            // Add the rest when containers are sent into storage
+            // Add more here if a database is added to store containers in a file
 
             TableLayoutPanel panel = new TableLayoutPanel()
             {
@@ -311,9 +318,9 @@ namespace BasicLogisticLoop
             };
 
             // fill table with labels
-            for (int r = 0; r < rowCount + 1; r++)
+            for (int r = 0; r < rowCount; r++)
             {
-                for (int c = 0; c < columnCount + 1; c++)
+                for (int c = 0; c < columnCount; c++)
                 {
                     Label label = GenerateTableLabel(GetTableLabelName(c, r, type));
                     // add legend to top of table
@@ -321,6 +328,10 @@ namespace BasicLogisticLoop
                     {
                         label.Text = GetTableLegendText(type, c);
                         label.Font = new Font(label.Font, FontStyle.Bold);
+                    }
+                    if (r == 1 && c == 0)
+                    {
+                        //label.Text = rowCount.ToString() + " rows";
                     }
                     panel.Controls.Add(label);
                 }
