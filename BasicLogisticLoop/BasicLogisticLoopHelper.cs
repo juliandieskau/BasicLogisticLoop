@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using BasicLogisticLoop.Model;
+using System.CodeDom;
 
 namespace BasicLogisticLoop
 {
@@ -70,7 +71,7 @@ namespace BasicLogisticLoop
             };
 
             // add model and buttons above one another
-            panel.Controls.Add(GenerateModelPanel());
+            panel.Controls.Add(GenerateTabControl());
             panel.Controls.Add(GenerateButtonsPanel());
 
             // set rows size
@@ -78,6 +79,34 @@ namespace BasicLogisticLoop
             panel.RowStyles.Add(new RowStyle(SizeType.Percent, 6.0f));
 
             return panel;
+        }
+
+        /// <summary>
+        /// Generates a Tab Control that holds tabs of the model visualisations.
+        /// </summary>
+        /// <returns>Tab Control holding tabs and their content.</returns>
+        private TabControl GenerateTabControl()
+        {
+            // generate tab control
+            TabControl tabControl = new TabControl()
+            {
+                TabIndex = 2,
+                Dock = DockStyle.Fill
+            };
+
+            // generate tab pages
+            TabPage modelTabPage = new TabPage("Model View");
+            TabPage tableTabPage = new TabPage("Table View");
+
+            // add content to tab pages
+            modelTabPage.Controls.Add(GenerateModelPanel());
+            tableTabPage.Controls.Add(GenerateTableSplitContainer());
+
+            // add tab pages to tab control
+            tabControl.Controls.Add(modelTabPage);
+            tabControl.Controls.Add(tableTabPage);
+
+            return tabControl;
         }
 
         /// <summary>
@@ -122,7 +151,7 @@ namespace BasicLogisticLoop
                 CellBorderStyle = TableLayoutPanelCellBorderStyle.None,
                 Name = "modelTableLayoutPanel",
                 AutoSize = false,
-                Dock = DockStyle.None,
+                Dock = DockStyle.Fill,
                 Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right,
                 ColumnCount = viewSize.y,
                 RowCount = viewSize.x,
@@ -236,6 +265,70 @@ namespace BasicLogisticLoop
             return panel;
         }
 
+        private SplitContainer GenerateTableSplitContainer()
+        {
+            SplitContainer splitContainer = new SplitContainer()
+            {
+                BorderStyle = BorderStyle.FixedSingle,
+                Name = "tableSplitContainer",
+                Dock = DockStyle.Fill,
+                SplitterDistance = 300
+            };
+
+            // add left and right panel 
+            splitContainer.Panel1.Controls.Add(GenerateModelTable("nodes"));
+            splitContainer.Panel2.Controls.Add(GenerateModelTable("storage"));
+
+            return splitContainer;
+        }
+
+        /// <summary>
+        /// Generates a TableLayoutPanel that lists the active Containers in the model nodes or warehouse
+        /// </summary>
+        /// <param name="type">"nodes" or "storage"</param>
+        /// <returns>Generated panel depending on type</returns>
+        private TableLayoutPanel GenerateModelTable(string type)
+        {
+            int columnCount = type == "nodes" ? 5 : 3;
+            int rowCount = 0;
+            foreach (ViewNode node in NodeData)
+            {
+                if (node.Type != NodeType.Warehouse)
+                {
+                    rowCount++;
+                }
+            }
+
+            TableLayoutPanel panel = new TableLayoutPanel()
+            {
+                CellBorderStyle = TableLayoutPanelCellBorderStyle.Single,
+                Dock = DockStyle.Fill,
+                Name = type + "ModelTable",
+                AutoSize = true,
+                ColumnCount = columnCount,
+                RowCount = rowCount,
+                AutoScroll = true
+            };
+
+            // fill table with labels
+            for (int r = 0; r < rowCount + 1; r++)
+            {
+                for (int c = 0; c < columnCount + 1; c++)
+                {
+                    Label label = GenerateTableLabel(GetTableLabelName(c, r, type));
+                    // add legend to top of table
+                    if (r == 0)
+                    {
+                        label.Text = GetTableLegendText(type, c);
+                        label.Font = new Font(label.Font, FontStyle.Bold);
+                    }
+                    panel.Controls.Add(label);
+                }
+            }
+
+            return panel;
+        }
+
         /// <summary>
         /// LEFT PANEL
         /// Method that generates a panel that holds the step and commission button.
@@ -344,7 +437,7 @@ namespace BasicLogisticLoop
         }
 
         // #################################################
-        // CONTROLS GENERATOR METHODS
+        // CONTENT GENERATOR METHODS
 
         /// <summary>
         /// Method to generate a label based on a ViewNode object.
@@ -410,6 +503,23 @@ namespace BasicLogisticLoop
                 Font = new Font(new FontFamily("Arial"), 60, FontStyle.Regular, GraphicsUnit.Pixel),
                 Dock = DockStyle.Fill,
                 TextAlign = ContentAlignment.MiddleCenter,
+                Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right
+            };
+
+            return label;
+        }
+
+        private Label GenerateTableLabel(string name)
+        {
+            Label label = new Label
+            {
+                Name = name,
+                Text = "",
+                BorderStyle = BorderStyle.None,
+                Font = new Font(new FontFamily("Arial"), 16, FontStyle.Regular, GraphicsUnit.Pixel),
+                TextAlign = ContentAlignment.MiddleLeft,
+                AutoSize = true,
+                Dock = DockStyle.Fill,
                 Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right
             };
 
@@ -628,6 +738,54 @@ namespace BasicLogisticLoop
         private string GetArrowLabelName(string direction, int index)
         {
             return direction + "Arrow" + LabelBaseName + index.ToString();
+        }
+
+        private string GetTableLabelName(int column, int row, string type)
+        {
+            return type + "TableLabelC" + column.ToString() + "R" + row.ToString();
+        }
+
+        /// <summary>
+        /// Generates the text to display as a legend in the topmost row of tables showing containers information
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="column"></param>
+        /// <returns></returns>
+        private string GetTableLegendText(string type, int column)
+        {
+            if (type == "nodes")
+            {
+                switch (column)
+                {
+                    case 0:
+                        return "TransportUnitNumber";
+                    case 1:
+                        return "Destination";
+                    case 2:
+                        return "Content";
+                    case 3:
+                        return "Position: NodeID";
+                    case 4:
+                        return "Position: NodeType";
+                    default:
+                        return "";
+                }
+            }
+            else if (type == "storage")
+            {
+                switch (column)
+                {
+                    case 0:
+                        return "TransportUnitNumber";
+                    case 1:
+                        return "Destination";
+                    case 2:
+                        return "Content";
+                    default:
+                        return "";
+                }
+            }
+            return "";
         }
 
         /// <summary>
