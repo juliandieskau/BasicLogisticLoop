@@ -26,6 +26,18 @@ namespace BasicLogisticLoop
         private Label NodeShown = null;
 
         // #################################################
+        // EVENT METHODS
+
+        /// <summary>
+        /// EventHandler Method for setting Form attributes that get overwritten from Windows Forms again afterwards to set them to a wanted value.
+        /// </summary>
+        private void FormShown(object sender, EventArgs e)
+        {
+            SplitContainer table = Controls.Find("tableSplitContainer", true).FirstOrDefault() as SplitContainer;
+            table.SplitterDistance = 700;
+        }
+
+        // #################################################
         // PANEL GENERATOR METHODS
 
         /// <summary>
@@ -271,8 +283,7 @@ namespace BasicLogisticLoop
             {
                 BorderStyle = BorderStyle.FixedSingle,
                 Name = "tableSplitContainer",
-                Dock = DockStyle.Fill,
-                SplitterDistance = 300
+                Dock = DockStyle.Fill
             };
 
             // add left and right panel 
@@ -520,6 +531,11 @@ namespace BasicLogisticLoop
             return label;
         }
 
+        /// <summary>
+        /// Generates an empty Label with a given name that is made to fill TableLayoutContainers like what a table of text would look like.
+        /// </summary>
+        /// <param name="name">Name attribute of the label to access it to fill with content.</param>
+        /// <returns></returns>
         private Label GenerateTableLabel(string name)
         {
             Label label = new Label
@@ -759,8 +775,8 @@ namespace BasicLogisticLoop
         /// <summary>
         /// Generates the text to display as a legend in the topmost row of tables showing containers information
         /// </summary>
-        /// <param name="type"></param>
-        /// <param name="column"></param>
+        /// <param name="type">"nodes" or "storage" depending on the table you want a legend of.</param>
+        /// <param name="column">Index of column to put a legend over.</param>
         /// <returns></returns>
         private string GetTableLegendText(string type, int column)
         {
@@ -769,15 +785,15 @@ namespace BasicLogisticLoop
                 switch (column)
                 {
                     case 0:
-                        return "TransportUnitNumber";
+                        return "TUN";
                     case 1:
                         return "Destination";
                     case 2:
                         return "Content";
                     case 3:
-                        return "Position: NodeID";
+                        return "on NodeID";
                     case 4:
-                        return "Position: NodeType";
+                        return "on NodeType";
                     default:
                         return "";
                 }
@@ -787,7 +803,7 @@ namespace BasicLogisticLoop
                 switch (column)
                 {
                     case 0:
-                        return "TransportUnitNumber";
+                        return "TUN";
                     case 1:
                         return "Destination";
                     case 2:

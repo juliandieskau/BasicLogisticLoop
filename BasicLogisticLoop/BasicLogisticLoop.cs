@@ -64,6 +64,7 @@ namespace BasicLogisticLoop
 
             // generate form controls here
             Controls.Add(GenerateSplitContainer());
+            Shown += new EventHandler(FormShown);
         }
 
         /// <summary>
@@ -82,7 +83,7 @@ namespace BasicLogisticLoop
                     NodeData[index] = changedNode;
                 }
 
-                // Update the corresponding label in the view with the new node
+                // Update the corresponding label in the model view with the new node
                 UpdateNode(changedNode);
 
                 // Update NodeDetails if changedNode is currently displayed
@@ -91,6 +92,9 @@ namespace BasicLogisticLoop
                     ShowContent(NodeShown);
                 }
             }
+
+            // Update the corresponding row in the table view with each new nodes container
+            UpdateNodesTable();
         }
 
         /// <summary>
@@ -108,6 +112,32 @@ namespace BasicLogisticLoop
                 Label nodeLabel = control as Label;
                 string newText = GenerateNodeLabelText(node.NodeID, node.Type, node.Container);
                 nodeLabel.Text = newText;
+            }
+        }
+
+        private void UpdateNodesTable()
+        {
+            // Get NodeData and filter by the nodes that have containers on them and order them by their containers TUN
+            List<ViewNode> nodesWithContainer = NodeData.FindAll(n => n.Container != null)
+                                                        .OrderBy(n => n.Container.TransportUnitNumber).ToList();
+
+            // Get Table to put data inside
+            TableLayoutPanel nodesTable = Controls.Find("nodesModelTable", true).First() as TableLayoutPanel;
+
+            // Put Containers into table rows
+            for (int i = 0; i < nodesWithContainer.Count; i++)
+            {
+                int r = i + 1;
+                nodesTable.Controls.Find(GetTableLabelName(0, r, "nodes"), false).First().Text 
+                    = nodesWithContainer[i].Container.TransportUnitNumber.ToString();
+                nodesTable.Controls.Find(GetTableLabelName(1, r, "nodes"), false).First().Text
+                    = NodeTypeToString(nodesWithContainer[i].Container.DestinationType);
+                nodesTable.Controls.Find(GetTableLabelName(2, r, "nodes"), false).First().Text
+                    = nodesWithContainer[i].Container.Content;
+                nodesTable.Controls.Find(GetTableLabelName(3, r, "nodes"), false).First().Text
+                    = nodesWithContainer[i].NodeID.ToString();
+                nodesTable.Controls.Find(GetTableLabelName(4, r, "nodes"), false).First().Text
+                    = NodeTypeToString(nodesWithContainer[i].Type);
             }
         }
 
