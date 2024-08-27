@@ -333,7 +333,7 @@ namespace BasicLogisticLoop
             {
                 for (int c = 0; c < columnCount; c++)
                 {
-                    Label label = GenerateTableLabel(GetTableLabelName(c, r, type));
+                    Label label = GenerateTableLabel(GetTableLabelName(c, r, type), c, r);
                     // add legend to top of table
                     if (r == 0)
                     {
@@ -536,21 +536,39 @@ namespace BasicLogisticLoop
         /// </summary>
         /// <param name="name">Name attribute of the label to access it to fill with content.</param>
         /// <returns></returns>
-        private Label GenerateTableLabel(string name)
+        private Label GenerateTableLabel(string name, int column, int row)
         {
-            Label label = new Label
+            using (Graphics g = CreateGraphics())
             {
-                Name = name,
-                Text = "",
-                BorderStyle = BorderStyle.None,
-                Font = new Font(new FontFamily("Arial"), 16, FontStyle.Regular, GraphicsUnit.Pixel),
-                TextAlign = ContentAlignment.MiddleLeft,
-                AutoSize = true,
-                Dock = DockStyle.Fill,
-                Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right
-            };
+                Font font = new Font(new FontFamily("Arial"), 16, FontStyle.Regular, GraphicsUnit.Pixel);
 
-            return label;
+                Label label = new Label
+                {
+                    Name = name,
+                    Text = "",
+                    BorderStyle = BorderStyle.None,
+                    Font = new Font(new FontFamily("Arial"), 16, FontStyle.Regular, GraphicsUnit.Pixel),
+                    TextAlign = ContentAlignment.MiddleLeft,
+                    AutoSize = true,
+                    Dock = DockStyle.Fill,
+                    Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right
+                };
+
+                // set the width of legend to the widest possible label width in that column to 
+                if (column == 2 && row == 0)
+                {
+                    label.AutoSize = false;
+                    SizeF size = g.MeasureString("High Protein Kirsch Pudding", font);
+                    label.Size = size.ToSize();
+                }
+                else if (column == 0 && row == 0)
+                {
+                    label.AutoSize = false;
+                    SizeF size = g.MeasureString("1234567890", font);
+                    label.Size = size.ToSize();
+                } 
+                return label;
+            }
         }
 
         /// <summary>
@@ -855,11 +873,11 @@ namespace BasicLogisticLoop
                 "Steinofen Ciabatta", "Bio Röstkaffee", "Erdbeer Konfitüre", "Bio Haferpops"
             };
             string content = "";
-            for (int i = 0; i <= random.Next(1, 9); i++)
+            for (int i = 0; i <= random.Next(0, 3); i++)
             {
                 content += words[random.Next(0, words.Length)] + Environment.NewLine;
             }
-            return content += words[random.Next(0, words.Length)];
+            return content;
         }
 
         // #################################################

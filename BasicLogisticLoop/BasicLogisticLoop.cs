@@ -124,6 +124,7 @@ namespace BasicLogisticLoop
             // Get Table to put data inside
             TableLayoutPanel nodesTable = Controls.Find("nodesModelTable", true).First() as TableLayoutPanel;
 
+            nodesTable.SuspendLayout();
             // Put Containers into table rows
             for (int i = 0; i < nodesWithContainer.Count; i++)
             {
@@ -139,6 +140,7 @@ namespace BasicLogisticLoop
                 nodesTable.Controls.Find(GetTableLabelName(4, r, "nodes"), false).First().Text
                     = NodeTypeToString(nodesWithContainer[i].Type);
             }
+            nodesTable.ResumeLayout();
         }
 
         /// <summary>
