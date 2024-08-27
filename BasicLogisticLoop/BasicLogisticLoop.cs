@@ -214,7 +214,6 @@ namespace BasicLogisticLoop
         /// Method as Event handler to be added to all Buttons that calls the Presenter by building a fitting IInput object.
         /// </summary>
         /// <param name="sender">Clicked Button.</param>
-        /// <param name="e">Event Arguments.</param>
         private void OnButtonClick(object sender, EventArgs e)
         {
             // Step Button, Commissioning Button, Retrieval Button:
@@ -271,6 +270,7 @@ namespace BasicLogisticLoop
             else if (button.Name == "retrievalStepButton")
             {
                 // RETRIEVE
+                // TODO only works when only one retrieval node exists
                 // Get the input data to give the model, no error checking since errors here should crash the program (wrong logic)
                 int nodeID = NodeData.Find(node => node.Type == NodeType.Retrieval).NodeID;
                 TextBox retrievalTextBox = Controls.Find("retrievalTextBox", true).First() as TextBox;
@@ -313,17 +313,44 @@ namespace BasicLogisticLoop
         /// <summary>
         /// Method as Event handler to be added for TextBoxes to select all Text in the TextBox when clicked.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">TextBox object</param>
         private void OnTextBoxDoubleClick(object sender, EventArgs e)
         {
             TextBox textBox = sender as TextBox;
             textBox.SelectAll();
         }
 
-        private void OnWarehouseLabelClick(object sender, EventArgs e)
+        /// <summary>
+        /// Method as Event handler to be added for TUN Labels in the Warehouse Table to Retrieve the Container which's TUN was clicked.
+        /// </summary>
+        /// <param name="sender">Warehouse TUN Label</param>
+        private void OnWarehouseTUNLabelClick(object sender, EventArgs e)
         {
+            Label label = sender as Label;
+            string errorMessage = "";
 
+            if (label != null)
+            {
+                // Get the TUN of the container to retrieve
+                // example name: "123456WarehouseContainerLabel"
+                string name = label.Name;
+                string tunString = name.Remove(name.IndexOf("WarehouseContainerLabel"));
+                int containerTUN = Int32.Parse(tunString);
+
+                // Get the first empty retrieval node to retrieve to
+                int nodeID = NodeData.Find(node => node.Type == NodeType.Retrieval && node.Container == null).NodeID;
+
+                // let presenter update model with input
+                IInput input = new RetrievalInput(nodeID, containerTUN, "");
+                errorMessage = Presenter.ReceiveInput(input);
+
+                if (errorMessage != "")
+                {
+                    ShowErrorMessage(errorMessage);
+                }
+
+                // Removing the retrieved container from warehouse table is done on updating the view from presenter
+            }
         }
 
         /// <summary>

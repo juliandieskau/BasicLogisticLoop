@@ -256,6 +256,7 @@ namespace BasicLogisticLoop.Model
             {
                 throw new ArgumentException("The given nodeID does not match a storage node.");
             }
+
             // Save Container into Warehouse
             if (node.GetContainer() != null)
             {

@@ -772,9 +772,20 @@ namespace BasicLogisticLoop
             return direction + "Arrow" + LabelBaseName + index.ToString();
         }
 
+        /// <summary>
+        /// The string to use as the Name property in labels for the table representing the model.
+        /// </summary>
         private string GetTableLabelName(int column, int row, string type)
         {
             return type + "TableLabelC" + column.ToString() + "R" + row.ToString();
+        }
+
+        /// <summary>
+        /// The string to use as the Name property in labels for the table representing the Containers stored in the Warehouse.
+        /// </summary>
+        private string GetWarehouseLabelName(int nodeID)
+        {
+            return nodeID.ToString() + "WarehouseContainerLabel";
         }
 
         /// <summary>
