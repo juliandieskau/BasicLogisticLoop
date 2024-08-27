@@ -25,6 +25,11 @@ namespace BasicLogisticLoop.Model
         private List<GraphNode> GraphNodes;
 
         /// <summary>
+        /// List of Containers that are stored in the warehouse.
+        /// </summary>
+        private List<Container> Warehouse;
+
+        /// <summary>
         /// List of ViewNodes that holds warehouse nodes which are needed for the LogisticLoop Basic but aren't included in the GraphNodes.
         /// Needs to be added to GetViewNodes after GraphNodes are transformed into ViewNodes to complete information needed in view.
         /// </summary>
@@ -52,6 +57,7 @@ namespace BasicLogisticLoop.Model
         {
             ConstructGraph();
             ConstructGraphNodes();
+            ConstructWarehouse();
             ConstructWarehouseNodes();
         }
 
@@ -140,10 +146,6 @@ namespace BasicLogisticLoop.Model
             return message;
         }
 
-        // To show step by step how one step of a cycle is performed: (TODO if wanted)
-        // Returns List(size 2?) of changed nodes in each atomic step of one whole step and empty List if whole step is completed
-        //public List<ViewNode> AtomicStep() {}
-
         /// <summary>
         /// Commissions a container standing on the given Commissioning-Node (symbolically), gives it the destination "Storage"
         /// and moves it back into the loop, if adjacent node is empty.
@@ -193,9 +195,9 @@ namespace BasicLogisticLoop.Model
         /// Takes a newly created container content (from user input) and retrieves it (symbolically) from the warehouse onto the given retrieval node - if empty.
         /// Creates a container with the given content, a generated TransportUnit-Number and gives it the destination "Commissioning".
         /// </summary>
-        /// <param name="nodeID">ID of retrieval node to place the new container on.</param>
-        /// <param name="containerTUN">TransportUnitNumber of container to retrieve.</param>
-        /// <param name="content">Content of container to place onto the retrieval node.</param>
+        /// <param name="nodeID">ID of retrieval node to which the container should be added.</param>
+        /// <param name="containerTUN">TransportUnitNumber of container to retrieve. If equals existing container in warehouse retrieves it.</param>
+        /// <param name="content">Content that should be added in a container.</param>
         /// <returns>ErrorMessage when adjacent node to commission node is occupied or empty string if successful.</returns>
         /// <exception cref="ArgumentException">When the given nodeID does not match a retrieval node.</exception>
         public string RetrieveContainer(int nodeID, int containerTUN, string content)
@@ -210,17 +212,30 @@ namespace BasicLogisticLoop.Model
             // Check if node is empty
             if (!node.IsEmpty())
             {
-                return ErrorMessages.RetrievalError;
+                return ErrorMessages.RetrievalNotEmptyError;
             }
 
-            // Check given TUN
+            // Check if already in warehouse (given content is irrelevant)
+            Container c = Warehouse.Find(x => x.TransportUnitNumber == containerTUN);
+            if (c != null)
+            {
+                // put Container on retrieval node
+                node.ChangeContainer(c);
+
+                // remove Container from warehouse
+                Warehouse.Remove(c);
+
+                return "";
+            }
+
+            // Check if given a TUN
             if (containerTUN == 0)
             {
                 containerTUN = currentTUN;
+                currentTUN++;
             }
-            currentTUN++;
 
-            // Create container with input
+            // Create container with input and place on retrieval node
             Container container = new Container(transportUnitNumber: containerTUN, content: content, destinationType: NodeType.Commissioning);
             node.ChangeContainer(container);
             return "";
@@ -241,7 +256,8 @@ namespace BasicLogisticLoop.Model
             {
                 throw new ArgumentException("The given nodeID does not match a storage node.");
             }
-            // If the model would need this, save Container into a database ("warehouse") here
+            // Save Container into Warehouse
+
 
             // Empty the storage node
             node.ChangeContainer(null);
@@ -620,6 +636,15 @@ namespace BasicLogisticLoop.Model
                 new GraphNode(type: NodeType.Storage,       id: 13, coords: (1, 0)),
                 new GraphNode(type: NodeType.Retrieval,     id: 14, coords: (3, 0)),
             };
+        }
+
+        /// <summary>
+        /// Initializes the Warehouse Container List.
+        /// TODO if wanted: Store warehouse containers in file and load here
+        /// </summary>
+        private void ConstructWarehouse()
+        {
+            Warehouse = new List<Container>();
         }
 
         /// <summary>

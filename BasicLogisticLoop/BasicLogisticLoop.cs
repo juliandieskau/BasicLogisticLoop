@@ -281,7 +281,7 @@ namespace BasicLogisticLoop
                 {
                     containerTUN = Int32.Parse(tunTextBox.Text);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     containerTUN = 0;
                 }
@@ -319,6 +319,11 @@ namespace BasicLogisticLoop
         {
             TextBox textBox = sender as TextBox;
             textBox.SelectAll();
+        }
+
+        private void OnWarehouseLabelClick(object sender, EventArgs e)
+        {
+
         }
 
         /// <summary>
