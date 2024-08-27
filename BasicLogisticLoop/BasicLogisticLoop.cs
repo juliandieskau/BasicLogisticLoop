@@ -126,7 +126,9 @@ namespace BasicLogisticLoop
 
             nodesTable.SuspendLayout();
 
-            int rowsDifference = nodesWithContainer.Count - (nodesTable.RowCount - 2);
+            // Dynamically adjust table size depending on amount of containers
+            int rowCount = nodesTable.RowCount;
+            int rowsDifference = nodesWithContainer.Count - (rowCount - 2);
             // Remove rows if less nodesWithContainer than tableRows
             if (rowsDifference < 0)
             {
@@ -134,7 +136,7 @@ namespace BasicLogisticLoop
                 for (int i = 0; i > rowsDifference; i--)
                 {
                     // remove labels in last row
-                    int lastRow = nodesTable.RowCount - 1;
+                    int lastRow = rowCount - 1;
                     for (int col = 0; col < nodesTable.ColumnCount; col++)
                     {
                         Control c = nodesTable.GetControlFromPosition(col, lastRow);
@@ -147,12 +149,27 @@ namespace BasicLogisticLoop
                     nodesTable.RowCount--;
                 }
             }
+            // Add rows if more nodesWithContainer than tableRows
+            else if (rowsDifference > 0)
+            {
+                // add needed rows at the end
+                nodesTable.RowCount += rowsDifference;
+                for (int r = rowCount; r > rowsDifference + rowCount; r++)
+                {
+                    nodesTable.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+
+                    // Add labels into table into new rows
+                    for (int c = 0; c < nodesTable.ColumnCount; c++)
+                    {
+                        Label label = GenerateTableLabel(GetTableLabelName(c, r, "nodes"), c, r);
+                        nodesTable.Controls.Add(label);
+                    }
+                }
+            }
 
             // Update Table
             for (int i = 0; i < nodesWithContainer.Count; i++)
             {
-                // Add a row when the ones that are there are already full
-
                 // Put Containers into table rows
                 int r = i + 1; // row (legend is on 0)
                 nodesTable.Controls.Find(GetTableLabelName(0, r, "nodes"), false).First().Text 
