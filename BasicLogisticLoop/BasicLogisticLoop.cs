@@ -125,10 +125,36 @@ namespace BasicLogisticLoop
             TableLayoutPanel nodesTable = Controls.Find("nodesModelTable", true).First() as TableLayoutPanel;
 
             nodesTable.SuspendLayout();
-            // Put Containers into table rows
+
+            int rowsDifference = nodesWithContainer.Count - (nodesTable.RowCount - 2);
+            // Remove rows if less nodesWithContainer than tableRows
+            if (rowsDifference < 0)
+            {
+                // delete last row (adapted from https://stackoverflow.com/a/19717178 by user Arm0geddon, accessed 27.08.2024 10:15)
+                for (int i = 0; i > rowsDifference; i--)
+                {
+                    // remove labels in last row
+                    int lastRow = nodesTable.RowCount - 1;
+                    for (int col = 0; col < nodesTable.ColumnCount; col++)
+                    {
+                        Control c = nodesTable.GetControlFromPosition(col, lastRow);
+                        nodesTable.Controls.Remove(c);
+                        c.Dispose();
+                    }
+
+                    // remove last row
+                    nodesTable.RowStyles.RemoveAt(lastRow);
+                    nodesTable.RowCount--;
+                }
+            }
+
+            // Update Table
             for (int i = 0; i < nodesWithContainer.Count; i++)
             {
-                int r = i + 1;
+                // Add a row when the ones that are there are already full
+
+                // Put Containers into table rows
+                int r = i + 1; // row (legend is on 0)
                 nodesTable.Controls.Find(GetTableLabelName(0, r, "nodes"), false).First().Text 
                     = nodesWithContainer[i].Container.TransportUnitNumber.ToString();
                 nodesTable.Controls.Find(GetTableLabelName(1, r, "nodes"), false).First().Text
@@ -140,6 +166,7 @@ namespace BasicLogisticLoop
                 nodesTable.Controls.Find(GetTableLabelName(4, r, "nodes"), false).First().Text
                     = NodeTypeToString(nodesWithContainer[i].Type);
             }
+
             nodesTable.ResumeLayout();
         }
 

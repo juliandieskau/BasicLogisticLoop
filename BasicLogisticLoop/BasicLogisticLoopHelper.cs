@@ -303,16 +303,7 @@ namespace BasicLogisticLoop
             int columnCount = type == "nodes" ? 5 : 3;
             // Add as many rows to display containers as there are nodes where they can be on
             int rowCount = 2; // plus one row for legend, one for bottom row that fills the screen
-            if (type == "nodes")
-            {
-                foreach (ViewNode node in NodeData)
-                {
-                    if (node.Type != NodeType.Warehouse)
-                    {
-                        rowCount++;
-                    }
-                }
-            }
+            
             // No containers at the start for storage since its empty, plus the two for legend and filler
             // Add the rest when containers are sent into storage
             // Add more here if a database is added to store containers in a file
@@ -339,10 +330,6 @@ namespace BasicLogisticLoop
                     {
                         label.Text = GetTableLegendText(type, c);
                         label.Font = new Font(label.Font, FontStyle.Bold);
-                    }
-                    if (r == 1 && c == 0)
-                    {
-                        //label.Text = rowCount.ToString() + " rows";
                     }
                     panel.Controls.Add(label);
                 }
