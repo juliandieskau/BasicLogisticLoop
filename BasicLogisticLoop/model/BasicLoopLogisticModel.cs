@@ -99,6 +99,21 @@ namespace BasicLogisticLoop.Model
             return transformedNodes;
         }
 
+        /// <summary>
+        /// Clones the Warehouse List of Containers and returns them.
+        /// </summary>
+        /// <returns>List of Containers in Warehouse.</returns>
+        public List<Container> GetWarehouse()
+        {
+            List<Container> containers = new List<Container>();
+            foreach (Container container in Warehouse)
+            {
+                Container clone = new Container(container.TransportUnitNumber, container.Content, NodeType.Retrieval);
+                containers.Add(clone);
+            }
+            return containers;
+        }
+
         // ########################################
         // MODEL LOGIC METHODS
 
