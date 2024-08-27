@@ -132,20 +132,22 @@ namespace BasicLogisticLoop
             // Remove rows if less nodesWithContainer than tableRows
             if (rowsDifference < 0)
             {
-                // delete last row (adapted from https://stackoverflow.com/a/19717178 by user Arm0geddon, accessed 27.08.2024 10:15)
+                // delete last rows (adapted from https://stackoverflow.com/a/19717178 by user Arm0geddon, accessed 27.08.2024 10:15)
                 for (int i = 0; i > rowsDifference; i--)
                 {
-                    // remove labels in last row
-                    int lastRow = rowCount - 1;
-                    for (int col = 0; col < nodesTable.ColumnCount; col++)
+                    // remove labels in 2nd last row from back to front (otherwise previous operations would mess with the positions of the rest)
+                    int secondLastRow = nodesTable.RowCount - 2;
+                    for (int col = nodesTable.ColumnCount - 1; col >= 0 ; col--)
                     {
-                        Control c = nodesTable.GetControlFromPosition(col, lastRow);
-                        nodesTable.Controls.Remove(c);
-                        c.Dispose();
+                        Control c = nodesTable.GetControlFromPosition(col, secondLastRow); // is null
+                        if (c != null)
+                        {
+                            nodesTable.Controls.Remove(c);
+                            c.Dispose();
+                        }
                     }
 
-                    // remove last row
-                    nodesTable.RowStyles.RemoveAt(lastRow);
+                    // remove last row (which is empty and 2nd last is now also empty)
                     nodesTable.RowCount--;
                 }
             }
@@ -154,10 +156,8 @@ namespace BasicLogisticLoop
             {
                 // add needed rows at the end
                 nodesTable.RowCount += rowsDifference;
-                for (int r = rowCount; r > rowsDifference + rowCount; r++)
+                for (int r = rowCount; r < rowsDifference + rowCount; r++)
                 {
-                    nodesTable.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-
                     // Add labels into table into new rows
                     for (int c = 0; c < nodesTable.ColumnCount; c++)
                     {
@@ -168,20 +168,23 @@ namespace BasicLogisticLoop
             }
 
             // Update Table
-            for (int i = 0; i < nodesWithContainer.Count; i++)
+            int w = 0;
+            while (w < nodesWithContainer.Count)
             {
                 // Put Containers into table rows
-                int r = i + 1; // row (legend is on 0)
-                nodesTable.Controls.Find(GetTableLabelName(0, r, "nodes"), false).First().Text 
-                    = nodesWithContainer[i].Container.TransportUnitNumber.ToString();
-                nodesTable.Controls.Find(GetTableLabelName(1, r, "nodes"), false).First().Text
-                    = NodeTypeToString(nodesWithContainer[i].Container.DestinationType);
-                nodesTable.Controls.Find(GetTableLabelName(2, r, "nodes"), false).First().Text
-                    = nodesWithContainer[i].Container.Content;
-                nodesTable.Controls.Find(GetTableLabelName(3, r, "nodes"), false).First().Text
-                    = nodesWithContainer[i].NodeID.ToString();
-                nodesTable.Controls.Find(GetTableLabelName(4, r, "nodes"), false).First().Text
-                    = NodeTypeToString(nodesWithContainer[i].Type);
+                int r = w + 1; // row (legend is on 0)
+                nodesTable.GetControlFromPosition(0, r).Text
+                    = nodesWithContainer[w].Container.TransportUnitNumber.ToString();
+                nodesTable.GetControlFromPosition(1, r).Text
+                    = NodeTypeToString(nodesWithContainer[w].Container.DestinationType);
+                nodesTable.GetControlFromPosition(2, r).Text
+                    = nodesWithContainer[w].Container.Content;
+                nodesTable.GetControlFromPosition(3, r).Text
+                    = nodesWithContainer[w].NodeID.ToString();
+                nodesTable.GetControlFromPosition(4, r).Text
+                    = NodeTypeToString(nodesWithContainer[w].Type);
+
+                w++;
             }
 
             nodesTable.ResumeLayout();
