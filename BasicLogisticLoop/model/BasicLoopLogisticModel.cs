@@ -46,7 +46,7 @@ namespace BasicLogisticLoop.Model
         /// <summary>
         /// Index to save the last used TransportUnit-Number and increase by 1 before assigning it to the next container.
         /// </summary>
-        private int currentTUN = 10000;
+        private int CurrentTUN = 10000;
 
         /// <summary>
         /// Constructor that sets up all the model data the BasicLogisticsLoop needs.
@@ -227,7 +227,7 @@ namespace BasicLogisticLoop.Model
             // Check if node is empty
             if (!node.IsEmpty())
             {
-                return ErrorMessages.RetrievalNotEmptyError;
+                return ErrorMessages.RetrievalNotEmptyError; // TODO gets called even on retrieving from warehouse table
             }
 
             // Check if already in warehouse (given content is irrelevant)
@@ -249,13 +249,14 @@ namespace BasicLogisticLoop.Model
             // Check if given a TUN
             if (containerTUN == 0)
             {
-                containerTUN = currentTUN;
-                currentTUN++;
+                containerTUN = CurrentTUN;
+                CurrentTUN++;
             }
 
             // Create container with input and place on retrieval node
             Container container = new Container(transportUnitNumber: containerTUN, content: content, destinationType: NodeType.Commissioning);
             node.ChangeContainer(container);
+
             return "";
         }
 

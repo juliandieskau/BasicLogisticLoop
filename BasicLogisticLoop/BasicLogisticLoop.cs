@@ -3,6 +3,7 @@ using BasicLogisticLoop.Presenter;
 using BasicLogisticLoop.Presenter.Input;
 using BasicLogisticLoop.Presenter.Output;
 using System;
+using System.Globalization;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
@@ -11,6 +12,7 @@ using System.Runtime.ConstrainedExecution;
 using System.Runtime.Remoting.Channels;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Forms;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -22,6 +24,8 @@ namespace BasicLogisticLoop
     /// </summary>
     public partial class BasicLogisticLoopForm : Form
     {
+        private string Log = "";
+
         /// <summary>
         /// Controls the model and calls the form back with updates of the model. 
         /// Needs to be called when receiving user input.
@@ -121,16 +125,17 @@ namespace BasicLogisticLoop
             {
                 // Put Containers into table rows
                 int r = w + 1; // row (legend is on 0)
+                string name = orderedWarehouse[w].TransportUnitNumber.ToString();
 
-                warehouseTable.GetControlFromPosition(0, r).Text =
-                    orderedWarehouse[w].TransportUnitNumber.ToString();
-                warehouseTable.GetControlFromPosition(1, r).Text =
-                    NodeTypeToString(orderedWarehouse[w].DestinationType);
-                warehouseTable.GetControlFromPosition(2, r).Text =
-                    orderedWarehouse[w].Content;
+                warehouseTable.GetControlFromPosition(0, r).Text = name;
+                warehouseTable.GetControlFromPosition(1, r).Text = NodeTypeToString(orderedWarehouse[w].DestinationType);
+                warehouseTable.GetControlFromPosition(2, r).Text = orderedWarehouse[w].Content;
+
+                // Change name of TUN Label to the TUN to get which container to retrieve on click
+                warehouseTable.GetControlFromPosition(0, r).Name = name;
 
                 // Make TUN Label clickable for retrieving its container
-                warehouseTable.GetControlFromPosition(0, r).Click += new EventHandler(OnWarehouseTUNLabelClick);
+                warehouseTable.GetControlFromPosition(0, r).DoubleClick += new EventHandler(OnWarehouseTUNLabelClick);
 
                 w++;
             }
@@ -217,6 +222,9 @@ namespace BasicLogisticLoop
                         Control c = table.GetControlFromPosition(col, secondLastRow); // is null
                         if (c != null)
                         {
+                            // remove DoubleClick event from Label if it has the event
+                            c.DoubleClick -= OnWarehouseTUNLabelClick;
+
                             table.Controls.Remove(c);
                             c.Dispose();
                         }
@@ -379,13 +387,27 @@ namespace BasicLogisticLoop
         /// <param name="sender">Warehouse TUN Label</param>
         private void OnWarehouseTUNLabelClick(object sender, EventArgs e)
         {
+            // Log clicks
+            DateTime localTime = DateTime.Now;
+            string logTime = localTime.ToString(new CultureInfo("de-DE"));
+            if (Log.Contains(logTime))
+            {
+                // leave method if already called in this moment
+                return;
+            }
+            Log += logTime + Environment.NewLine;
+
             Label label = sender as Label;
             string errorMessage = "";
 
             if (label != null)
             {
+                // Remove this event handler method from the calling label, so it can only get clicked once
+                // TODO, since doing so would disable being able to click again if retrieving fails (retrieval not empty)
+                label.DoubleClick -= OnWarehouseTUNLabelClick;
+
                 // Get the TUN of the container to retrieve
-                int containerTUN = Int32.Parse(label.Text.Trim());
+                int containerTUN = Int32.Parse(label.Name.Trim());
 
                 // Get the first retrieval node to retrieve to
                 int nodeID = NodeData.Find(node => node.Type == NodeType.Retrieval).NodeID;
@@ -396,7 +418,9 @@ namespace BasicLogisticLoop
 
                 if (errorMessage != "")
                 {
-                    ShowErrorMessage(errorMessage);
+                    // output log
+                    ShowErrorMessage(errorMessage + Environment.NewLine + "call log: " + Log);
+                    //throw new Exception(errorMessage + " call log: " + Log);
                 }
 
                 // Removing the retrieved container from warehouse table is done on updating the view from presenter
