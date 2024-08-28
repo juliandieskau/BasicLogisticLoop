@@ -234,6 +234,9 @@ namespace BasicLogisticLoop.Model
             Container c = Warehouse.Find(x => x.TransportUnitNumber == containerTUN);
             if (c != null)
             {
+                // change destination to commissioning
+                c.DestinationType = NodeType.Commissioning;
+
                 // put Container on retrieval node
                 node.ChangeContainer(c);
 

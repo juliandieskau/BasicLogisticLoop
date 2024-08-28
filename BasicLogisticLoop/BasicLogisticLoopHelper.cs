@@ -775,6 +775,7 @@ namespace BasicLogisticLoop
         /// <summary>
         /// The string to use as the Name property in labels for the table representing the model.
         /// </summary>
+        /// <param name="type">"nodes" or "storage"</param>
         private string GetTableLabelName(int column, int row, string type)
         {
             return type + "TableLabelC" + column.ToString() + "R" + row.ToString();

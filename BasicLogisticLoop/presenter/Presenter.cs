@@ -89,6 +89,8 @@ namespace BasicLogisticLoop.Presenter
             List<ViewNode> changedNodes = FilterUnchangedNodes(Model.GetViewNodes());
             View.UpdateWithViewNodes(changedNodes);
 
+            List<Container> warehouseContainers = Model.GetWarehouse();
+            View.UpdateWarehouseContainers(warehouseContainers);
             return message;
         }
 

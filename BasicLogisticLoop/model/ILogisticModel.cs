@@ -42,5 +42,11 @@ namespace BasicLogisticLoop.Model
         /// <param name="content">Content that should be added in a container.</param>
         /// <returns>ErrorMessage if not successful or empty string otherwise.</returns>
         string RetrieveContainer(int nodeID, int containerTUN, string content);
+
+        /// <summary>
+        /// Clones the Warehouse List of Containers and returns them.
+        /// </summary>
+        /// <returns>List of Containers in Warehouse.</returns>
+        List<Container> GetWarehouse();
     }
 }

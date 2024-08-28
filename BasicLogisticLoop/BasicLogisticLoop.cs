@@ -98,6 +98,47 @@ namespace BasicLogisticLoop
         }
 
         /// <summary>
+        /// Updates the table view of warehouse containers with given list of containers.
+        /// </summary>
+        /// <param name="containers">List of containers in the warehouse of the model.</param>
+        public void UpdateWarehouseContainers(List<Container> containers)
+        {
+            // Get warehouse containers and order them by their TUN
+            List<Container> orderedWarehouse = containers.OrderBy(n => n.TransportUnitNumber).ToList();
+
+            // Get Table to put data inside
+            TableLayoutPanel warehouseTable = Controls.Find("storageModelTable", true).First() as TableLayoutPanel;
+
+            warehouseTable.SuspendLayout();
+
+            // Dynamically adjust table size depending on amount of containers
+            int rowsDifference = orderedWarehouse.Count - (warehouseTable.RowCount - 2);
+            ResizeTable(rowsDifference, warehouseTable, "storage");
+
+            // Update table with containers
+            int w = 0;
+            while (w < orderedWarehouse.Count)
+            {
+                // Put Containers into table rows
+                int r = w + 1; // row (legend is on 0)
+
+                warehouseTable.GetControlFromPosition(0, r).Text =
+                    orderedWarehouse[w].TransportUnitNumber.ToString();
+                warehouseTable.GetControlFromPosition(1, r).Text =
+                    NodeTypeToString(orderedWarehouse[w].DestinationType);
+                warehouseTable.GetControlFromPosition(2, r).Text =
+                    orderedWarehouse[w].Content;
+
+                // Make TUN Label clickable for retrieving its container
+                warehouseTable.GetControlFromPosition(0, r).Click += new EventHandler(OnWarehouseTUNLabelClick);
+
+                w++;
+            }
+
+            warehouseTable.ResumeLayout();
+        }
+
+        /// <summary>
         /// Updates the labels in the view representing the given ViewNode with its data.
         /// Works even when viewNodes have multiple Labels representing them displayed in the view.
         /// </summary>
@@ -127,45 +168,8 @@ namespace BasicLogisticLoop
             nodesTable.SuspendLayout();
 
             // Dynamically adjust table size depending on amount of containers
-            int rowCount = nodesTable.RowCount;
-            int rowsDifference = nodesWithContainer.Count - (rowCount - 2);
-            // Remove rows if less nodesWithContainer than tableRows
-            if (rowsDifference < 0)
-            {
-                // delete last rows (adapted from https://stackoverflow.com/a/19717178 by user Arm0geddon, accessed 27.08.2024 10:15)
-                for (int i = 0; i > rowsDifference; i--)
-                {
-                    // remove labels in 2nd last row from back to front (otherwise previous operations would mess with the positions of the rest)
-                    int secondLastRow = nodesTable.RowCount - 2;
-                    for (int col = nodesTable.ColumnCount - 1; col >= 0 ; col--)
-                    {
-                        Control c = nodesTable.GetControlFromPosition(col, secondLastRow); // is null
-                        if (c != null)
-                        {
-                            nodesTable.Controls.Remove(c);
-                            c.Dispose();
-                        }
-                    }
-
-                    // remove last row (which is empty and 2nd last is now also empty)
-                    nodesTable.RowCount--;
-                }
-            }
-            // Add rows if more nodesWithContainer than tableRows
-            else if (rowsDifference > 0)
-            {
-                // add needed rows at the end
-                nodesTable.RowCount += rowsDifference;
-                for (int r = rowCount; r < rowsDifference + rowCount; r++)
-                {
-                    // Add labels into table into new rows
-                    for (int c = 0; c < nodesTable.ColumnCount; c++)
-                    {
-                        Label label = GenerateTableLabel(GetTableLabelName(c, r, "nodes"), c, r);
-                        nodesTable.Controls.Add(label);
-                    }
-                }
-            }
+            int rowsDifference = nodesWithContainer.Count - (nodesTable.RowCount - 2);
+            ResizeTable(rowsDifference, nodesTable, "nodes");
 
             // Update Table
             int w = 0;
@@ -173,6 +177,7 @@ namespace BasicLogisticLoop
             {
                 // Put Containers into table rows
                 int r = w + 1; // row (legend is on 0)
+
                 nodesTable.GetControlFromPosition(0, r).Text
                     = nodesWithContainer[w].Container.TransportUnitNumber.ToString();
                 nodesTable.GetControlFromPosition(1, r).Text
@@ -188,6 +193,54 @@ namespace BasicLogisticLoop
             }
 
             nodesTable.ResumeLayout();
+        }
+
+        /// <summary>
+        /// Dynamically adjust table size depending on amount of containers that are in the model in comparison to the rows of the table.
+        /// </summary>
+        /// <param name="rowsDifference">greater 0 if more new containers, smaller 0 if more rows than new containers</param>
+        /// <param name="table">table to adjust size (amount of rows) of</param>
+        /// <param name="type">"nodes" or "storage"</param>
+        private void ResizeTable(int rowsDifference, TableLayoutPanel table, string type)
+        {
+            int rowCount = table.RowCount;
+            // Remove rows if less containers to place in rows than tableRows
+            if (rowsDifference < 0)
+            {
+                // delete last rows (adapted from https://stackoverflow.com/a/19717178 by user Arm0geddon, accessed 27.08.2024 10:15)
+                for (int i = 0; i > rowsDifference; i--)
+                {
+                    // remove labels in 2nd last row from back to front (otherwise previous operations would mess with the positions of the rest)
+                    int secondLastRow = table.RowCount - 2;
+                    for (int col = table.ColumnCount - 1; col >= 0; col--)
+                    {
+                        Control c = table.GetControlFromPosition(col, secondLastRow); // is null
+                        if (c != null)
+                        {
+                            table.Controls.Remove(c);
+                            c.Dispose();
+                        }
+                    }
+
+                    // remove last row (which is empty and 2nd last is now also empty)
+                    table.RowCount--;
+                }
+            }
+            // Add rows if more containers to place in rows than tableRows
+            else if (rowsDifference > 0)
+            {
+                // add needed rows at the end
+                table.RowCount += rowsDifference;
+                for (int r = rowCount; r < rowsDifference + rowCount; r++)
+                {
+                    // Add labels into table into new rows
+                    for (int c = 0; c < table.ColumnCount; c++)
+                    {
+                        Label label = GenerateTableLabel(GetTableLabelName(c, r, type), c, r);
+                        table.Controls.Add(label);
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -332,17 +385,14 @@ namespace BasicLogisticLoop
             if (label != null)
             {
                 // Get the TUN of the container to retrieve
-                // example name: "123456WarehouseContainerLabel"
-                string name = label.Name;
-                string tunString = name.Remove(name.IndexOf("WarehouseContainerLabel"));
-                int containerTUN = Int32.Parse(tunString);
+                int containerTUN = Int32.Parse(label.Text.Trim());
 
-                // Get the first empty retrieval node to retrieve to
-                int nodeID = NodeData.Find(node => node.Type == NodeType.Retrieval && node.Container == null).NodeID;
+                // Get the first retrieval node to retrieve to
+                int nodeID = NodeData.Find(node => node.Type == NodeType.Retrieval).NodeID;
 
                 // let presenter update model with input
-                IInput input = new RetrievalInput(nodeID, containerTUN, "");
-                errorMessage = Presenter.ReceiveInput(input);
+                IInput retrievalInput = new RetrievalInput(nodeID, containerTUN, "");
+                errorMessage = Presenter.ReceiveInput(retrievalInput);
 
                 if (errorMessage != "")
                 {
