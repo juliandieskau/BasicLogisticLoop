@@ -135,6 +135,7 @@ namespace BasicLogisticLoop
                 warehouseTable.GetControlFromPosition(0, r).Name = name;
 
                 // Make TUN Label clickable for retrieving its container
+                warehouseTable.GetControlFromPosition(0, r).DoubleClick -= OnWarehouseTUNLabelClick;
                 warehouseTable.GetControlFromPosition(0, r).DoubleClick += new EventHandler(OnWarehouseTUNLabelClick);
 
                 w++;
@@ -393,7 +394,7 @@ namespace BasicLogisticLoop
             if (Log.Contains(logTime))
             {
                 // leave method if already called in this moment
-                return;
+                //return;
             }
             Log += logTime + Environment.NewLine;
 
@@ -404,7 +405,7 @@ namespace BasicLogisticLoop
             {
                 // Remove this event handler method from the calling label, so it can only get clicked once
                 // TODO, since doing so would disable being able to click again if retrieving fails (retrieval not empty)
-                label.DoubleClick -= OnWarehouseTUNLabelClick;
+                //label.DoubleClick -= OnWarehouseTUNLabelClick;
 
                 // Get the TUN of the container to retrieve
                 int containerTUN = Int32.Parse(label.Name.Trim());
