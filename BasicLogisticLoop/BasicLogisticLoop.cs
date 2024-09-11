@@ -1,20 +1,12 @@
 ﻿using BasicLogisticLoop.Model;
-using BasicLogisticLoop.Presenter;
 using BasicLogisticLoop.Presenter.Input;
 using BasicLogisticLoop.Presenter.Output;
 using System;
-using System.Globalization;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Runtime.ConstrainedExecution;
-using System.Runtime.Remoting.Channels;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Forms;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace BasicLogisticLoop
 {
@@ -24,8 +16,6 @@ namespace BasicLogisticLoop
     /// </summary>
     public partial class BasicLogisticLoopForm : Form
     {
-        private string Log = "";
-
         /// <summary>
         /// Controls the model and calls the form back with updates of the model. 
         /// Needs to be called when receiving user input.
@@ -81,7 +71,7 @@ namespace BasicLogisticLoop
             foreach (ViewNode changedNode in changedNodes)
             {
                 // Update the ViewNode in the views NodeData to the new node
-                int index = NodeData.FindIndex(n =>  n.NodeID == changedNode.NodeID);
+                int index = NodeData.FindIndex(n => n.NodeID == changedNode.NodeID);
                 if (index > -1)
                 {
                     NodeData[index] = changedNode;
@@ -262,11 +252,12 @@ namespace BasicLogisticLoop
             Label label = sender as Label;
             // For Node Labels: 
             //      When clicked display its content in label on the right side panel
-            if (label.Name.Contains(NodeTypeToString(NodeType.Conveyor))        |
-                label.Name.Contains(NodeTypeToString(NodeType.Retrieval))       |
-                label.Name.Contains(NodeTypeToString(NodeType.Commissioning))   |
-                label.Name.Contains(NodeTypeToString(NodeType.Storage))         |
-                label.Name.Contains(NodeTypeToString(NodeType.Warehouse))) {
+            if (label.Name.Contains(NodeTypeToString(NodeType.Conveyor)) |
+                label.Name.Contains(NodeTypeToString(NodeType.Retrieval)) |
+                label.Name.Contains(NodeTypeToString(NodeType.Commissioning)) |
+                label.Name.Contains(NodeTypeToString(NodeType.Storage)) |
+                label.Name.Contains(NodeTypeToString(NodeType.Warehouse)))
+            {
                 NodeShown = label;
                 ShowContent(label);
             }
@@ -364,7 +355,7 @@ namespace BasicLogisticLoop
                 IInput stepInput = new StepInput();
                 errorMessage = Presenter.ReceiveInput(stepInput);
             }
-            
+
             // Output error message if receiving input failed
             if (errorMessage != "")
             {
@@ -388,25 +379,11 @@ namespace BasicLogisticLoop
         /// <param name="sender">Warehouse TUN Label</param>
         private void OnWarehouseTUNLabelClick(object sender, EventArgs e)
         {
-            // Log clicks
-            DateTime localTime = DateTime.Now;
-            string logTime = localTime.ToString(new CultureInfo("de-DE"));
-            if (Log.Contains(logTime))
-            {
-                // leave method if already called in this moment
-                //return;
-            }
-            Log += logTime + Environment.NewLine;
-
             Label label = sender as Label;
             string errorMessage = "";
 
             if (label != null)
             {
-                // Remove this event handler method from the calling label, so it can only get clicked once
-                // TODO, since doing so would disable being able to click again if retrieving fails (retrieval not empty)
-                //label.DoubleClick -= OnWarehouseTUNLabelClick;
-
                 // Get the TUN of the container to retrieve
                 int containerTUN = Int32.Parse(label.Name.Trim());
 
@@ -420,8 +397,7 @@ namespace BasicLogisticLoop
                 if (errorMessage != "")
                 {
                     // output log
-                    ShowErrorMessage(errorMessage + Environment.NewLine + "call log: " + Log);
-                    //throw new Exception(errorMessage + " call log: " + Log);
+                    ShowErrorMessage(errorMessage);
                 }
 
                 // Removing the retrieved container from warehouse table is done on updating the view from presenter
@@ -444,11 +420,11 @@ namespace BasicLogisticLoop
                     Label label = control as Label;
                     // only for node labels
                     if (label != null &&
-                        (   label.Name.Contains(NodeTypeToString(NodeType.Conveyor))        |
-                            label.Name.Contains(NodeTypeToString(NodeType.Retrieval))       |
-                            label.Name.Contains(NodeTypeToString(NodeType.Commissioning))   |
-                            label.Name.Contains(NodeTypeToString(NodeType.Storage))         |
-                            label.Name.Contains(NodeTypeToString(NodeType.Warehouse))       ))
+                        (label.Name.Contains(NodeTypeToString(NodeType.Conveyor)) |
+                            label.Name.Contains(NodeTypeToString(NodeType.Retrieval)) |
+                            label.Name.Contains(NodeTypeToString(NodeType.Commissioning)) |
+                            label.Name.Contains(NodeTypeToString(NodeType.Storage)) |
+                            label.Name.Contains(NodeTypeToString(NodeType.Warehouse))))
                     {
                         // unhighlight label: set background color
                         label.BackColor = LabelBackColor;
@@ -460,7 +436,8 @@ namespace BasicLogisticLoop
             foreach (ViewNode node in NodeData)
             {
                 // compare the node labels name with the view nodes name
-                if (nodeLabel.Name == GetNodeLabelName(node.Type, node.NodeID)) {
+                if (nodeLabel.Name == GetNodeLabelName(node.Type, node.NodeID))
+                {
                     // Get the Controls of the Node Details part of the side bar
                     Label nodeTypeLabel = Controls.Find(LabelType.GetName(LabelType.NodeType), true).First() as Label;
                     Label nodeIDLabel = Controls.Find(LabelType.GetName(LabelType.NodeID), true).First() as Label;
@@ -472,8 +449,8 @@ namespace BasicLogisticLoop
                     string tunText = LabelType.GetText(LabelType.TUN);
                     string destinationText = LabelType.GetText(LabelType.Destination);
                     string containerText = "<empty>";
-                    tunText = node.Container == null 
-                        ? tunText + "<empty>" 
+                    tunText = node.Container == null
+                        ? tunText + "<empty>"
                         : tunText + node.Container.TransportUnitNumber.ToString();
                     destinationText = node.Container == null
                         ? destinationText + "<empty>"
