@@ -323,7 +323,7 @@ namespace BasicLogisticLoop
             else if (button.Name == "retrievalStepButton")
             {
                 // RETRIEVE
-                // TODO only works when only one retrieval node exists
+                // TODO if wanted: only works when only one retrieval node exists (not more in this basic model)
                 // Get the input data to give the model, no error checking since errors here should crash the program (wrong logic)
                 int nodeID = NodeData.Find(node => node.Type == NodeType.Retrieval).NodeID;
                 TextBox retrievalTextBox = Controls.Find("retrievalTextBox", true).First() as TextBox;

@@ -41,7 +41,7 @@ namespace BasicLogisticLoop.Model
         /// <summary>
         /// Number of Nodes in the graph (excluding warehouse nodes, which are only present for the view).
         /// </summary>
-        private int GraphNodeNumber = 15;
+        private readonly int GraphNodeNumber = 15;
 
         /// <summary>
         /// Index to save the last used TransportUnit-Number and increase by 1 before assigning it to the next container.
@@ -95,7 +95,7 @@ namespace BasicLogisticLoop.Model
 
             // Add all warehouse nodes which are not represented in the graph
             WarehouseNodes.ForEach(x => transformedNodes.Add(x));
-            
+
             return transformedNodes;
         }
 
@@ -227,7 +227,7 @@ namespace BasicLogisticLoop.Model
             // Check if node is empty
             if (!node.IsEmpty())
             {
-                return ErrorMessages.RetrievalNotEmptyError; // TODO gets called even on retrieving from warehouse table
+                return ErrorMessages.RetrievalNotEmptyError;
             }
 
             // Check if already in warehouse (given content is irrelevant)
@@ -317,11 +317,11 @@ namespace BasicLogisticLoop.Model
             //  Storage         (EB)                -> Warehouse    (nicht im System)   [StoreContainer()]
             //  Warehouse       (nicht im System)   -> Retrieval    (AB)                [RetrieveContainer()]
 
-            if (    (   (fromNode.Type == NodeType.Retrieval)       && (toNode.Type == NodeType.Conveyor)       )|
-                    (   (fromNode.Type == NodeType.Conveyor)        && (toNode.Type == NodeType.Conveyor)       )|
-                    (   (fromNode.Type == NodeType.Conveyor)        && (toNode.Type == NodeType.Commissioning)  )|
-                    (   (fromNode.Type == NodeType.Conveyor)        && (toNode.Type == NodeType.Storage)        )|
-                    (   (fromNode.Type == NodeType.Commissioning)   && (toNode.Type == NodeType.Conveyor)       ))
+            if (((fromNode.Type == NodeType.Retrieval) && (toNode.Type == NodeType.Conveyor)) |
+                    ((fromNode.Type == NodeType.Conveyor) && (toNode.Type == NodeType.Conveyor)) |
+                    ((fromNode.Type == NodeType.Conveyor) && (toNode.Type == NodeType.Commissioning)) |
+                    ((fromNode.Type == NodeType.Conveyor) && (toNode.Type == NodeType.Storage)) |
+                    ((fromNode.Type == NodeType.Commissioning) && (toNode.Type == NodeType.Conveyor)))
             {
                 // Set container on receiving node from sending node
                 int toIndex = GraphNodes.FindIndex(n => n.NodeID == toNode.NodeID);
@@ -347,7 +347,7 @@ namespace BasicLogisticLoop.Model
         /// </summary>
         /// <param name="unhandledNodeIDs">NodeIDs to check for moving containers from.</param>
         /// <returns>NodeIDs that havent moved the container after storage -> warehouse is completed.</returns>
-        private List<int> StepStorageToWarehouse(List<int> unhandledNodeIDs) 
+        private List<int> StepStorageToWarehouse(List<int> unhandledNodeIDs)
         {
             // Search all storage nodes
             List<int> storageNodeIDs = unhandledNodeIDs.FindAll(x => GetGraphNode(x).Type == NodeType.Storage);
@@ -369,7 +369,7 @@ namespace BasicLogisticLoop.Model
         /// </summary>
         /// <param name="unhandledNodeIDs">NodeIDs to check for moving containers from.</param>
         /// <returns>NodeIDs that havent moved their container after conveyor -> storage is completed.</returns>
-        private List<int> StepConveyorToStorage(List<int> unhandledNodeIDs) 
+        private List<int> StepConveyorToStorage(List<int> unhandledNodeIDs)
         {
             for (int i = 0; i < unhandledNodeIDs.Count; i++)
             {
@@ -405,7 +405,8 @@ namespace BasicLogisticLoop.Model
         /// <returns>NodeIDs that havent moved the container after conveyor -> commission is completed.</returns>
         private List<int> StepConveyorToCommission(List<int> unhandledNodeIDs)
         {
-            for (int i = 0; i < unhandledNodeIDs.Count; i++) {
+            for (int i = 0; i < unhandledNodeIDs.Count; i++)
+            {
                 int nodeID = unhandledNodeIDs[i];
 
                 // Find a conveyor node
@@ -457,7 +458,7 @@ namespace BasicLogisticLoop.Model
                             MoveContainer(retrievalNode, followingNode);
 
                             // remove the loop conveyor and retrieval node from being handled again, container on it already moved
-                            unhandledNodeIDs.Remove(retrievalNode.NodeID); 
+                            unhandledNodeIDs.Remove(retrievalNode.NodeID);
                             unhandledNodeIDs.Remove(followingNode.NodeID);
                         }
 
@@ -509,7 +510,8 @@ namespace BasicLogisticLoop.Model
             if (unhandledNodeIDs.Contains(firstNode.NodeID))
             {
                 // only change container on tile if the first one had a container
-                if (firstContainer != null) {
+                if (firstContainer != null)
+                {
                     if (!currentNode.IsEmpty())
                     {
                         throw new InvalidOperationException(ErrorMessages.StepError);
@@ -663,7 +665,7 @@ namespace BasicLogisticLoop.Model
 
         /// <summary>
         /// Initializes the Warehouse Container List.
-        /// TODO if wanted: Store warehouse containers in file and load here
+        /// TODO if wanted: Store warehouse containers in file and load here (not wanted for model)
         /// </summary>
         private void ConstructWarehouse()
         {
